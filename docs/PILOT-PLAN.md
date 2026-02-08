@@ -14,6 +14,7 @@
 | **Engagement** | Will a 6-year-old want to teach the system repeatedly? |
 | **Comprehension** | Does she understand the concept of "teaching" her twin? |
 | **Learning capture** | Does the system accurately reflect what she knows? |
+| **Recognition** | Can parent recognize the student through the twin's responses? |
 | **Parent trust** | Does the parent see value and feel comfortable? |
 | **Interaction model** | What modalities work? (voice, drawing, typing, video) |
 | **Session rhythm** | How long? How often? What triggers engagement? |
@@ -33,6 +34,7 @@
 - What does she want to teach? (follows curriculum or goes rogue?)
 - What frustrates her?
 - What delights her?
+- **Recognition test**: Does parent say "that sounds like her" when querying the twin?
 
 ### MVP Scope
 
@@ -85,6 +87,7 @@
 | Sessions per week | ≥3 |
 | Voluntary engagement | >50% initiated by her |
 | Query accuracy | >80% |
+| **Recognition** | Parent says "that sounds like her" when querying twin |
 | Parent sentiment | Positive; would recommend |
 | Child sentiment | Wants to continue; names the twin |
 | Retention | Still engaged in week 8 |

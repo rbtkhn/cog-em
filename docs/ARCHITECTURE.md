@@ -68,7 +68,12 @@ The SELF module strives to mirror the student as they actually are:
 - Employers want to know the real person, not a polished facade
 - The twin should answer "how would [student] think about X?" accurately
 - Authenticity builds trust in the credential
+
+**Validation test (recognition):**
 - The student should recognize themselves in the twin
+- Others who know the student should recognize them through the twin
+
+If a parent, teacher, or friend interacts with the twin and says "yes, that's exactly how [student] would say that" — the SELF module is working. If they say "that doesn't sound like them" — it's not.
 
 ### Seeding (Initial Survey)
 
