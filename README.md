@@ -21,12 +21,24 @@ Unlike traditional education tools that teach students, cog-em inverts the relat
 **Phase**: Pre-pilot  
 **Target**: Solo pilot with 1 student (age 6), 2 months
 
+## Architecture
+
+The cognitive twin has two core modules:
+
+| Module | Contains | Analogue |
+|--------|----------|----------|
+| **SELF** | Personality, preferences, linguistic style, values, reasoning patterns | CMC's MIND files |
+| **SKILLS** | Academic knowledge, practical abilities, creative works, domain expertise | CMC's MEM files |
+
+See [Architecture](docs/ARCHITECTURE.md) for full details.
+
 ## Repository Structure
 
 ```
 cog-em/
 ├── README.md                    # This file
 ├── docs/
+│   ├── ARCHITECTURE.md         # SELF + SKILLS module design
 │   ├── CONCEPT.md              # Full concept explanation
 │   ├── PILOT-PLAN.md           # 2-month pilot structure
 │   ├── COMPETITIVE-ANALYSIS.md # Market landscape
@@ -42,6 +54,7 @@ cog-em/
 
 ## Quick Links
 
+- [Architecture](docs/ARCHITECTURE.md) — SELF + SKILLS module design
 - [Full Concept](docs/CONCEPT.md)
 - [Pilot Plan](docs/PILOT-PLAN.md)
 - [Competitive Analysis](docs/COMPETITIVE-ANALYSIS.md)
