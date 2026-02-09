@@ -97,104 +97,152 @@ The SELF module updates as the system observes:
 
 ---
 
-## Module 2: SKILLS (Knowledge Modules)
+## Module 2: SKILLS (Capability Modules)
 
 **Analogue to CMC's MEM files.**
 
-Contains what the student KNOWS and CAN DO — competencies that grow through teaching.
+Contains what the student CAN DO — capabilities that grow through authentic activity.
+
+### The Three Pillars
+
+Skills organize under three fundamental cognitive modes:
+
+| Pillar | Function | Activities |
+|--------|----------|------------|
+| **WRITE** | Production, expression | Journal, stories, explanations, messages |
+| **READ** | Intake, comprehension | Books read, summaries, interpretations |
+| **IMAGINE** | Creation, exploration | Creative play, hypotheticals, problem-solving |
 
 ### Structure
 
 ```
 SKILLS/
-├── ACADEMIC/
-│   ├── mathematics/
-│   ├── language/
-│   ├── science/
-│   ├── history/
-│   └── ...
-├── PRACTICAL/
-│   ├── cooking/
-│   ├── coding/
-│   ├── music/
-│   └── ...
-├── CREATIVE/
-│   ├── art/
-│   ├── writing/
-│   ├── design/
-│   └── ...
-└── DOMAIN/
-    ├── [specialized areas]/
-    └── ...
+├── WRITE/
+│   ├── vocabulary/       # Words used, range, sophistication
+│   ├── complexity/       # Sentence structure, variety
+│   ├── style/            # Narrative voice, tone
+│   ├── expression/       # Emotional content
+│   └── logic/            # Argument, sequence
+│
+├── READ/
+│   ├── comprehension/    # Understanding content
+│   ├── inference/        # Conclusions beyond explicit
+│   ├── vocabulary/       # Words acquired
+│   └── interests/        # What they choose
+│
+└── IMAGINE/
+    ├── originality/      # Novel ideas
+    ├── reasoning/        # Logical chains
+    ├── flexibility/      # Adapting to constraints
+    └── elaboration/      # Detail, richness
 ```
 
-### Knowledge Node Structure
+### Activity-Based Growth
 
-Each piece of knowledge includes:
+The student doesn't "teach" skills — they **do** things. cog-em observes and infers.
 
 ```
-{
-  "concept": "Multiplication",
-  "depth": 3,              // 1-5 scale
-  "first_taught": "2026-03-15",
-  "last_demonstrated": "2026-04-20",
-  "teaching_sessions": 7,
-  "verification_level": "attested",
-  "connections": ["addition", "division", "area"],
-  "evidence": [
-    { "type": "teaching", "date": "...", "content": "..." },
-    { "type": "demonstration", "date": "...", "content": "..." }
-  ]
-}
+Activity: Daily journal entry (WRITE)
+├── Content captured: full text
+├── Analysis: vocabulary, complexity, style, topics
+├── SELF observations: linguistic markers, emotional tone
+└── Capability claims updated: WRITE.vocabulary, WRITE.expression
 ```
 
 ### Characteristics
 
-- **Grows continuously**: New knowledge added through teaching
-- **Explicitly taught**: Student actively teaches the system
-- **Verified**: Different trust tiers (self-reported → certified)
-- **Connected**: Knowledge nodes link to related concepts
-- **Depth-tracked**: Not just "knows" but "how deeply"
+- **Activity-driven**: Grows from authentic production, not explicit teaching
+- **Pillar-organized**: WRITE, READ, IMAGINE as primary structure
+- **Dimension-tracked**: Each pillar has measurable sub-dimensions
+- **Level-based**: 5 developmental levels per dimension
+- **Evidence-linked**: Every claim traces to captured activities
 
 ---
 
 ## Interaction Between Modules
 
-### SELF Influences SKILLS
+### SELF → SKILLS (Prediction)
 
-- **Learning style** (SELF) affects how knowledge is structured (SKILLS)
-- **Interests** (SELF) predict which skills develop fastest
-- **Reasoning patterns** (SELF) shape how concepts connect
+- **Interests** (SELF) predict which pillars develop fastest
+- **Reasoning patterns** (SELF) shape IMAGINE capability growth
 
-### SKILLS Reveal SELF
+### SKILLS → SELF (Inference)
 
-- What a student chooses to teach reveals interests
-- How they explain reveals linguistic style
-- What they struggle with reveals learning patterns
+Each pillar feeds different SELF components:
+
+```
+WRITE Activity ──→ SELF.linguistic_style (primary source)
+                   SELF.interests (topics written about)
+                   SELF.emotional_patterns (expression)
+
+READ Activity ───→ SELF.interests (what they choose)
+                   SELF.preferences (content patterns)
+                   SELF.values (themes they return to)
+
+IMAGINE Activity → SELF.reasoning_patterns (how they think)
+                   SELF.interests (what they explore)
+```
+
+### The WRITE → SELF Pipeline
+
+Every WRITE activity triggers a SELF update:
+
+| WRITE dimension | Updates SELF component |
+|-----------------|------------------------|
+| vocabulary | linguistic_style.vocabulary_level |
+| complexity | linguistic_style.sentence_patterns |
+| style | linguistic_style.tone, verbal_habits |
+| expression | emotional_patterns |
+| topics | interests |
+
+### The READ → SELF Pipeline
+
+Every READ activity triggers a SELF update:
+
+| READ data | Updates SELF component |
+|-----------|------------------------|
+| content chosen | interests (topics they seek out) |
+| genres preferred | preferences.favorites |
+| themes returned to | values (what matters to them) |
+| difficulty level | (informs developmental stage) |
+| emotional reactions | emotional_patterns |
+
+**Example:**
+```
+READ: "Charlotte's Web" (3rd time), "Magic Tree House #12", "Dinosaur encyclopedia"
+
+SELF inferences:
+├── interests: animals, adventure, dinosaurs
+├── preferences.favorites.books: ["Charlotte's Web", ...]
+├── values: friendship (Charlotte's Web theme)
+└── reading_patterns: re-reads favorites, explores series
+```
 
 ### Both Required for Emulation
 
 A true cognitive twin needs both:
 - SELF alone = personality without capability
-- SKILLS alone = knowledge without character
-- SELF + SKILLS = thinking like this specific person
+- SKILLS alone = capabilities without character
+- SELF + SKILLS = produces output like this specific person
+
+**Key insight:** WRITE is both a skill AND the primary data source for SELF.
 
 ---
 
 ## Query Modes
 
 ### Query SELF
-> "What kind of learner is [student]?"
+> "What kind of person is [student]?"
 > "How does [student] typically approach new problems?"
 > "What are [student]'s core values?"
 
-### Query SKILLS
-> "What does [student] know about calculus?"
-> "Solve this problem the way [student] would."
-> "What's the depth of [student]'s programming knowledge?"
+### Query SKILLS (by pillar)
+> "How well does [student] write?"
+> "What's [student]'s reading comprehension level?"
+> "How creative/original is [student]?"
 
 ### Query BOTH (Full Emulation)
-> "How would [student] approach learning [new topic]?"
+> "Write a journal entry the way [student] would."
 > "Explain [concept] the way [student] would explain it."
 > "What would [student] find interesting about [subject]?"
 
@@ -306,43 +354,95 @@ interface Skills {
   id: string;
   student_id: string;
   
-  domains: {
-    [domain: string]: {
-      [subdomain: string]: KnowledgeNode[];
-    };
+  // The three pillars
+  pillars: {
+    WRITE: PillarProfile;
+    READ: PillarProfile;
+    IMAGINE: PillarProfile;
   };
+  
+  // All captured activities
+  activities: Activity[];
+  
+  // Derived capability claims
+  capabilities: CapabilityClaim[];
+  
+  // Gaps and struggles
+  gaps: GapEntry[];
+  struggles: StruggleEntry[];
   
   created_at: Date;
   updated_at: Date;
 }
 
-interface KnowledgeNode {
-  id: string;
-  concept: string;
-  depth: 1 | 2 | 3 | 4 | 5;
-  
-  first_taught: Date;
-  last_demonstrated: Date;
-  teaching_sessions: number;
-  
-  verification: {
-    level: 'self_reported' | 'attested' | 'verified' | 'certified';
-    attestations: Attestation[];
+interface PillarProfile {
+  dimensions: {
+    [dimension: string]: {
+      level: 1 | 2 | 3 | 4 | 5;
+      confidence: number;           // 0-1
+      activity_count: number;
+      last_activity: Date;
+    };
   };
-  
-  connections: string[];  // IDs of related nodes
-  
-  evidence: Evidence[];
-  
-  gaps: string[];  // Known gaps or weaknesses
 }
 
-interface Evidence {
-  type: 'teaching' | 'demonstration' | 'creation' | 'attestation';
+interface Activity {
+  id: string;
   date: Date;
-  content: string;
-  modality: 'voice' | 'text' | 'drawing' | 'video';
-  verification_level: string;
+  duration_minutes: number;
+  modality: 'voice' | 'text' | 'image' | 'video' | 'mixed';
+  
+  activity_type: 'journal' | 'story' | 'summary' | 'conversation' | 'creative' | 'artwork' | 'building' | 'problem';
+  pillar_primary: 'WRITE' | 'READ' | 'IMAGINE';
+  pillar_secondary?: 'WRITE' | 'READ' | 'IMAGINE';
+  
+  // Content varies by modality
+  content: {
+    text?: string;               // For voice/text
+    image_file?: string;         // For artwork uploads
+    student_description?: string; // What they say about their creation
+  };
+  
+  analysis: {
+    pillar_metrics: Record<string, any>;  // Dimension-specific analysis
+    self_observations: {
+      linguistic_markers: string[];
+      emotional_tone: string;
+      interests_signaled: string[];
+    };
+    // For image activities
+    image_analysis?: {
+      subject_matter: string[];
+      elaboration: 1 | 2 | 3 | 4 | 5;
+      originality: 1 | 2 | 3 | 4 | 5;
+      colors_mood: string;
+    };
+  };
+  
+  verification: {
+    live_capture: boolean;
+    biometric_confirmed: boolean;
+    ai_detection: 'human' | 'uncertain' | 'flagged';
+    image_authenticity?: 'original' | 'uncertain' | 'flagged';
+  };
+}
+
+interface CapabilityClaim {
+  id: string;
+  pillar: 'WRITE' | 'READ' | 'IMAGINE';
+  dimension: string;
+  statement: string;
+  level: 1 | 2 | 3 | 4 | 5;
+  
+  verification_level: 'observed' | 'attested' | 'verified' | 'certified';
+  confidence_tier: 1 | 2 | 3 | 4;
+  
+  first_demonstrated: Date;
+  last_confirmed: Date;
+  activity_count: number;
+  evidence: string[];  // Activity IDs
+  
+  status: 'emerging' | 'established' | 'archived';
 }
 ```
 
@@ -357,9 +457,9 @@ interface Evidence {
 - Granular access control (can share skills without personality)
 
 ### SKILLS (Sensitive)
-- Contains knowledge and competency data
+- Contains capability data across READ/WRITE/IMAGINE
 - Can be shared for credential purposes
-- Domain-limited access possible (share math, not personal life)
+- Pillar-limited access possible (share WRITE, not all pillars)
 
 ### Access Control Matrix
 
@@ -369,9 +469,9 @@ interface Evidence {
 | Parent (child <12) | Full | Full |
 | Parent (child 12-18) | Summary | Full |
 | Parent (child 18+) | None (unless granted) | None (unless granted) |
-| Employer | None (unless granted) | Granted domains only |
-| University | None (unless granted) | Granted domains only |
-| Mentor | Granted portions | Granted domains |
+| Employer | None (unless granted) | Granted pillars only |
+| University | None (unless granted) | Granted pillars only |
+| Mentor | Granted portions | Granted pillars |
 
 ---
 
@@ -385,21 +485,22 @@ interface Evidence {
 - Interest tracking
 
 **SKILLS:**
-- Free-form teaching (no structured domains yet)
-- Simple knowledge nodes
-- Basic depth tracking
+- WRITE pillar only (journal entries)
+- Activity capture and analysis
+- Basic dimension tracking (vocabulary, complexity, expression)
 
 ### Phase 2 (Cohort Pilot)
 
 **SELF:**
-- Personality inference from interactions
+- Personality inference from activities
 - Reasoning pattern detection
 - Value inference
 
 **SKILLS:**
-- Structured domains (academic, practical, creative)
-- Connection mapping
-- Verification levels
+- All three pillars (WRITE, READ, IMAGINE)
+- Full dimension tracking
+- Capability claims with verification levels
+- Gap and struggle logging
 
 ---
 
@@ -410,19 +511,53 @@ interface Evidence {
    - Preferences change rapidly
    - Need to balance capture vs. overfit
 
-2. **Should SKILLS have curriculum structure or emerge organically?**
-   - Structured: easier to compare, evaluate
-   - Organic: respects how children actually learn
+2. **How to prompt READ and IMAGINE activities?**
+   - WRITE is natural (journal)
+   - READ needs "tell me about what you read" prompts
+   - IMAGINE needs creative prompts or observation
 
 3. **How to handle SELF changes over time?**
    - Person at 6 ≠ person at 16
-   - Preserve history or update in place?
+   - Preserve history (snapshots) + update current
 
-4. **What's the minimum SELF needed for useful emulation?**
-   - Linguistic style + interests might be enough to start
-   - Full personality model can wait
+4. **What's the minimum for useful emulation?**
+   - WRITE samples + SELF linguistic style might be enough to start
+   - Full pillar coverage can wait
 
 ---
 
-*Document version: 1.0*  
+## Template Governance
+
+Each module is governed by a template that defines structure, rules, and compliance checks.
+
+| Module | Template | Adapted From |
+|--------|----------|--------------|
+| SELF | [SELF–TEMPLATE.md](SELF-TEMPLATE.md) | CMC's CIV–MIND–TEMPLATE |
+| SKILLS | [SKILLS–TEMPLATE.md](SKILLS-TEMPLATE.md) | CMC's CIV–SCHOLAR–TEMPLATE |
+
+### Key Concepts from Templates
+
+**From SELF–TEMPLATE:**
+- Authentic mirroring principle
+- Component structure (personality, linguistic, narrative, preferences, values, reasoning, interests)
+- Seeding via initial survey
+- Evolution with preserved history
+- Forbidden behaviors (things the student would never say)
+- Snapshots at age milestones
+
+**From SKILLS–TEMPLATE:**
+- Phase model: BUILD → MILESTONE → ARCHIVE
+- Verified Knowledge Claims (VKCs)
+- Knowledge Gap Log (what they don't know)
+- Struggle Log (difficulties and how overcome)
+- Teaching Session Format
+- Dependency mapping (prerequisites, unlocks)
+- Inconsistency handling
+- Confidence tiers and verification levels
+- Domain structure
+- Snapshots at age milestones
+
+---
+
+*Document version: 1.1*  
 *Last updated: February 2026*

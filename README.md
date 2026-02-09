@@ -39,6 +39,8 @@ cog-em/
 ├── README.md                    # This file
 ├── docs/
 │   ├── ARCHITECTURE.md         # SELF + SKILLS module design
+│   ├── SELF-TEMPLATE.md        # SELF module governance
+│   ├── SKILLS-TEMPLATE.md      # SKILLS module governance
 │   ├── CONCEPT.md              # Full concept explanation
 │   ├── PILOT-PLAN.md           # 2-month pilot structure
 │   ├── COMPETITIVE-ANALYSIS.md # Market landscape
@@ -55,6 +57,8 @@ cog-em/
 ## Quick Links
 
 - [Architecture](docs/ARCHITECTURE.md) — SELF + SKILLS module design
+- [SELF Template](docs/SELF-TEMPLATE.md) — Personality module governance
+- [SKILLS Template](docs/SKILLS-TEMPLATE.md) — Knowledge module governance
 - [Full Concept](docs/CONCEPT.md)
 - [Pilot Plan](docs/PILOT-PLAN.md)
 - [Competitive Analysis](docs/COMPETITIVE-ANALYSIS.md)
