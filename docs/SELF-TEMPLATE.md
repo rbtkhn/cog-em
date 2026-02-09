@@ -6,7 +6,7 @@ Status: DRAFT
 Version: 1.0
 Last Update: February 2026
 
-**Governed by**: [COG-EM-CORE v1.0](COG-EM-CORE.md)
+**Governed by**: [COG-EM-CORE v1.1](COG-EM-CORE.md)
 Adapted from: CIV–MIND–TEMPLATE v3.0 (CMC)
 
 ---

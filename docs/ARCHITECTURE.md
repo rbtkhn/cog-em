@@ -1,6 +1,6 @@
 # cog-em Architecture
 
-**Governed by**: [COG-EM-CORE v1.0](COG-EM-CORE.md)
+**Governed by**: [COG-EM-CORE v1.1](COG-EM-CORE.md)
 
 ---
 

@@ -136,6 +136,7 @@ cog-em/
 │   └── cog-em-pilot.mdc     # Cursor rule for pilot sessions
 ├── docs/
 │   ├── COG-EM-CORE.md       # CANONICAL governance
+│   ├── PARENT-BRIEF.md      # Parent/guardian brief (pre-survey)
 │   ├── ARCHITECTURE.md      # Module design
 │   ├── SELF-TEMPLATE.md     # SELF module governance
 │   ├── SKILLS-TEMPLATE.md   # SKILLS module governance
@@ -153,7 +154,8 @@ cog-em/
         ├── SELF.md          # Personality profile (to be seeded)
         ├── SKILLS.md        # Capability containers (empty)
         ├── EVIDENCE.md      # Activity logs (empty)
-        └── SESSION-LOG.md   # Interaction history
+        ├── SESSION-LOG.md   # Interaction history (incl. consent)
+        └── SURVEY-CAPTURE.md # Seed survey capture template
 ```
 
 ---
@@ -185,9 +187,11 @@ cog-em/
 **Phase:** SEEDING
 **Goal:** Build initial SELF profile through survey + early activities
 
+**Before survey:** Share `docs/PARENT-BRIEF.md` with parent; use `users/pilot-001/SURVEY-CAPTURE.md` during session.
+
 **Initial survey questions:**
-1. What are your favorite books?
-2. What are your favorite movies/shows?
+1. What are your favorite movies/shows?
+2. What are your favorite books/stories?
 3. What are your favorite places?
 4. What are your favorite games?
 
