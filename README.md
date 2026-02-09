@@ -41,6 +41,7 @@ cog-em/
 │   ├── ARCHITECTURE.md         # SELF + SKILLS module design
 │   ├── SELF-TEMPLATE.md        # SELF module governance
 │   ├── SKILLS-TEMPLATE.md      # SKILLS module governance
+│   ├── EVIDENCE-TEMPLATE.md    # Evidence storage & reading list
 │   ├── CONCEPT.md              # Full concept explanation
 │   ├── PILOT-PLAN.md           # 2-month pilot structure
 │   ├── COMPETITIVE-ANALYSIS.md # Market landscape
@@ -48,6 +49,12 @@ cog-em/
 │   ├── DIFFERENTIATION.md      # Competitive moats
 │   ├── TEAM.md                 # Hiring plan
 │   └── LETTER-TO-STUDENT.md    # Letter to first pilot student
+├── students/
+│   └── pilot-001/              # First pilot student
+│       ├── SELF.md             # Personality profile
+│       ├── SKILLS.md           # Capability containers
+│       ├── EVIDENCE.md         # Reading/Writing/Creation logs
+│       └── SESSION-LOG.md      # Interaction history
 ├── app/                        # Future: iPad app
 ├── backend/                    # Future: API/services
 └── research/
@@ -58,7 +65,8 @@ cog-em/
 
 - [Architecture](docs/ARCHITECTURE.md) — SELF + SKILLS module design
 - [SELF Template](docs/SELF-TEMPLATE.md) — Personality module governance
-- [SKILLS Template](docs/SKILLS-TEMPLATE.md) — Knowledge module governance
+- [SKILLS Template](docs/SKILLS-TEMPLATE.md) — Capability module governance
+- [Evidence Template](docs/EVIDENCE-TEMPLATE.md) — Evidence storage, reading list, attestations
 - [Full Concept](docs/CONCEPT.md)
 - [Pilot Plan](docs/PILOT-PLAN.md)
 - [Competitive Analysis](docs/COMPETITIVE-ANALYSIS.md)

@@ -77,15 +77,20 @@ If a parent, teacher, or friend interacts with the twin and says "yes, that's ex
 
 ### Seeding (Initial Survey)
 
-For a 6-year-old:
-1. Ten favorite movies/shows
-2. Ten favorite books/stories
-3. Ten favorite places
-4. Ten favorite things to do
-5. Ten favorite people (family, friends, characters)
-6. What makes you happy?
-7. What makes you frustrated?
-8. How do you like to learn new things?
+Simple favorites survey (5-10 minutes):
+
+```
+1. What are your favorite movies or shows?
+2. What are your favorite books or stories?
+3. What are your favorite places?
+4. What are your favorite games?
+```
+
+That's it. Everything else is inferred from activity:
+- Linguistic style ← WRITE activities
+- Interests ← all pillars
+- Personality ← observed patterns
+- Values ← READ choices, WRITE content
 
 ### Evolution
 
@@ -226,6 +231,174 @@ A true cognitive twin needs both:
 - SELF + SKILLS = produces output like this specific person
 
 **Key insight:** WRITE is both a skill AND the primary data source for SELF.
+
+---
+
+## Response Grounding Principle
+
+When the twin responds to queries, it should draw from the student's own evidence.
+
+### Grounding Sources
+
+| Source | Use |
+|--------|-----|
+| **Writing Log** | Vocabulary, phrases, examples from their own writing |
+| **Reading List** | References to books/content they've actually consumed |
+| **Creation Log** | Examples from their own creative work |
+| **SELF.narrative** | Their own stories, memories, relationships |
+
+### Why This Matters
+
+```
+Generic AI: "You might enjoy reading about dinosaurs."
+Cognitive Twin: "Remember when you read that dinosaur encyclopedia 
+                 and wrote about the T-Rex in your journal? Like that."
+```
+
+The twin should:
+- Use the student's actual vocabulary (from Writing Log)
+- Reference books they've read (from Reading List)
+- Recall their own creations (from Creation Log)
+- Mention their real experiences (from SELF.narrative)
+
+### Implementation
+
+```
+Query: "What should I learn next?"
+
+Response generation:
+1. Load SELF.interests → dinosaurs, space, building
+2. Load Reading List → books read, gaps
+3. Load Writing Log → recent topics, vocabulary level
+4. Generate response GROUNDED in their evidence
+
+Output: "You've been writing a lot about dinosaurs lately, 
+        and you finished that Magic Tree House about the moon. 
+        Maybe a book about what dinosaurs would do in space?"
+```
+
+### Grounding Rules
+
+1. **Prefer student's own words** — Use phrases from Writing Log
+2. **Reference their reading** — "Like in [book they read]..."
+3. **Connect to their creations** — "Remember when you drew..."
+4. **Anchor to their experiences** — "Like when you went to [place]..."
+5. **Never invent experiences** — Only reference documented evidence
+
+---
+
+## Container Edge Principle
+
+The three SKILLS pillars (READ, WRITE, IMAGINE) are **containers** that define what the student currently knows and can do. The twin communicates at the **edge** of these containers.
+
+### The Container Model
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   TOO ADVANCED                       │
+│              (beyond current reach)                  │
+├─────────────────────────────────────────────────────┤
+│ ░░░░░░░░░░░░░░░░ THE EDGE ░░░░░░░░░░░░░░░░░░░░░░░░░ │
+│   (zone of proximal development — where to teach)   │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│              INSIDE THE CONTAINER                   │
+│           (what they already know/can do)           │
+│                                                     │
+│   READ: books read, vocabulary acquired             │
+│   WRITE: words used, complexity achieved            │
+│   IMAGINE: creativity demonstrated                  │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
+
+### Communication at the Edge
+
+| Zone | What it means | Twin behavior |
+|------|---------------|---------------|
+| Inside container | Already knows/can do | Reference, don't teach |
+| At the edge | Just beyond current level | Teach here — optimal |
+| Outside container | Too advanced | Don't go here yet |
+
+### How the Twin Finds the Edge
+
+**READ container edge:**
+```
+Current: Reading chapter books, vocabulary ~800 words
+Edge: Slightly longer books, 1-2 new words per session
+Too far: Young adult novels, complex vocabulary
+```
+
+**WRITE container edge:**
+```
+Current: Simple sentences, 50-word entries
+Edge: Introduce compound sentences, "because" connectors
+Too far: Paragraph structure, thesis statements
+```
+
+**IMAGINE container edge:**
+```
+Current: Recombines familiar elements
+Edge: Prompt novel combinations, "what if X met Y?"
+Too far: Abstract reasoning, philosophical hypotheticals
+```
+
+### Gap Filling
+
+The Capability Gap Log identifies holes INSIDE the container:
+
+```
+Container: WRITE
+  │
+  ├── Established: vocabulary, expression, topics
+  ├── GAP: logical organization (should be here, isn't)
+  └── Edge: complexity (next to develop)
+
+Twin response: Fill the gap before extending the edge.
+"Let's try writing about what happened FIRST, THEN, FINALLY..."
+```
+
+### Implementation
+
+When the twin responds:
+
+1. **Load container state** — What's in each pillar?
+2. **Identify the edge** — What's the current boundary?
+3. **Check for gaps** — Any holes inside the container?
+4. **Calibrate response:**
+   - Use vocabulary FROM the container (grounding)
+   - Introduce concepts AT the edge
+   - Fill gaps BEFORE extending
+   - Never jump OUTSIDE the container
+
+### Example
+
+```
+Student: "Tell me about volcanoes."
+
+Container check:
+- READ: Has read 2 books mentioning volcanoes (basic)
+- WRITE: Uses "hot", "fire", "explode" (limited vocab)
+- IMAGINE: Drew a volcano once (surface interest)
+
+Edge identification:
+- Vocabulary edge: "lava", "eruption", "magma"
+- Concept edge: Why volcanoes happen (plate tectonics)
+
+Response (at edge, grounded):
+"Remember when you drew that volcano with the red lava? 
+ The hot melted rock inside is called 'magma.' 
+ When it comes out, it's called 'lava.' 
+ Do you know why it comes out? The Earth is like a puzzle..."
+```
+
+### Zone of Proximal Development
+
+This is the educational principle: teach at the boundary of current capability, where the student can succeed with guidance.
+
+- Too easy → boredom, no growth
+- Too hard → frustration, shutdown
+- At the edge → engagement, growth
 
 ---
 
@@ -534,28 +707,37 @@ Each module is governed by a template that defines structure, rules, and complia
 |--------|----------|--------------|
 | SELF | [SELF–TEMPLATE.md](SELF-TEMPLATE.md) | CMC's CIV–MIND–TEMPLATE |
 | SKILLS | [SKILLS–TEMPLATE.md](SKILLS-TEMPLATE.md) | CMC's CIV–SCHOLAR–TEMPLATE |
+| EVIDENCE | [EVIDENCE–TEMPLATE.md](EVIDENCE-TEMPLATE.md) | CMC's CIV–ARC–TEMPLATE |
 
 ### Key Concepts from Templates
 
 **From SELF–TEMPLATE:**
 - Authentic mirroring principle
 - Component structure (personality, linguistic, narrative, preferences, values, reasoning, interests)
-- Seeding via initial survey
+- Seeding via simple favorites survey (movies, books, places, games)
 - Evolution with preserved history
 - Forbidden behaviors (things the student would never say)
 - Snapshots at age milestones
 
 **From SKILLS–TEMPLATE:**
-- Phase model: BUILD → MILESTONE → ARCHIVE
-- Verified Knowledge Claims (VKCs)
-- Knowledge Gap Log (what they don't know)
-- Struggle Log (difficulties and how overcome)
-- Teaching Session Format
-- Dependency mapping (prerequisites, unlocks)
-- Inconsistency handling
-- Confidence tiers and verification levels
-- Domain structure
+- Three pillars: WRITE, READ, IMAGINE
+- Activity-based growth (not explicit teaching)
+- Capability Claims with developmental levels
+- Capability Gap Log
+- Struggle Log (difficulties and breakthroughs)
+- Activity Capture Format (text, voice, image)
+- WRITE → SELF linguistic pipeline
+- READ → SELF preferences pipeline
 - Snapshots at age milestones
+
+**From EVIDENCE–TEMPLATE:**
+- Evidence tiers (Certified → Verified → Attested → Observed → Reported)
+- Reading List as systematic canon (like ARC)
+- Re-reads as strong preference signal
+- Media log for movies, shows, games
+- Attestation log for parent/teacher confirmations
+- Evidence metrics and confidence calculation
+- Immutability rules (activities can't be modified)
 
 ---
 

@@ -786,7 +786,65 @@ Later learning does not modify snapshots.
 
 ---
 
-## XI. QUERYING SKILLS
+## XI. CONTAINER EDGE TEACHING
+
+The three pillars are CONTAINERS that define current capability boundaries. The twin teaches at the EDGE.
+
+### Container State
+
+Each pillar has a current boundary:
+
+```
+READ Container:
+├── Vocabulary: ~800 words (level 3)
+├── Comprehension: chapter books (level 3)
+├── Inference: basic predictions (level 2)
+└── EDGE: longer books, 1-2 new words per session
+
+WRITE Container:
+├── Vocabulary: ~400 active words (level 2)
+├── Complexity: simple sentences (level 2)
+├── Expression: strong (level 3)
+└── EDGE: compound sentences, connectors
+
+IMAGINE Container:
+├── Originality: familiar recombinations (level 2)
+├── Reasoning: basic if-then (level 2)
+├── Elaboration: moderate detail (level 3)
+└── EDGE: novel combinations, longer chains
+```
+
+### Teaching at the Edge
+
+| Zone | Description | Twin behavior |
+|------|-------------|---------------|
+| Inside | Already knows/can do | Use as foundation, reference |
+| Edge | Just beyond current | Teach here (optimal) |
+| Outside | Too advanced | Don't go here yet |
+
+### Gap vs Edge
+
+**Gap:** Something INSIDE the container that's missing
+- Fill gaps BEFORE extending edge
+- Example: Can read but can't summarize → fill gap
+
+**Edge:** The BOUNDARY of current capability
+- Extend after gaps are filled
+- Example: Ready for slightly harder books
+
+### Implementation
+
+When the twin communicates:
+
+1. Check container state (levels, gaps)
+2. Use vocabulary FROM container (grounding)
+3. Introduce concepts AT edge (growth)
+4. Fill gaps before extending (foundations)
+5. Never jump outside container (frustration)
+
+---
+
+## XII. QUERYING SKILLS
 
 How evaluators interact with the SKILLS module.
 

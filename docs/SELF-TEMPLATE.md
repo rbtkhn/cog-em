@@ -345,42 +345,60 @@ Example:
 
 ## IV. SELF SEEDING (INITIAL SURVEY)
 
-For a 6-year-old starting the system.
+Simple favorites survey to initialize SELF. Everything else is inferred from activity.
 
-### Survey Questions
+### Core Survey (4 questions)
 
-1. **Favorites**
-   - What are your favorite movies or shows? (up to 10)
-   - What are your favorite books or stories? (up to 10)
-   - What are your favorite places to go? (up to 10)
-   - What are your favorite things to do? (up to 10)
-   - Who are your favorite people? (family, friends, characters)
+```
+1. What are your favorite movies or shows?
+2. What are your favorite books or stories?
+3. What are your favorite places?
+4. What are your favorite games?
+```
 
-2. **Emotions**
-   - What makes you really happy?
-   - What makes you frustrated or upset?
-   - What are you scared of?
-   - What makes you excited?
+That's it. Keep it simple.
 
-3. **Learning**
-   - How do you like to learn new things?
-   - Do you like to figure things out yourself or have someone show you?
-   - Do you like to work alone or with others?
+### Optional Extensions (if child is engaged)
 
-4. **Identity**
-   - Tell me about your family
-   - Where do you live? Where have you lived?
-   - What do you want to be when you grow up?
+```
+5. Who are your favorite people? (family, friends, characters)
+6. What do you like to do for fun?
+7. What do you want to be when you grow up?
+```
 
-5. **Open**
-   - What else should your learning friend know about you?
+### Why This Works
+
+| Survey Question | Seeds SELF Component |
+|-----------------|---------------------|
+| Favorite movies | preferences.favorites.movies, interests |
+| Favorite books | preferences.favorites.books, interests |
+| Favorite places | preferences.favorites.places, narrative |
+| Favorite games | preferences.favorites.games, interests |
+
+Everything else — linguistic style, personality, values, reasoning patterns — is **inferred from activity**, not surveyed.
 
 ### Survey Administration
 
-- Can be voice-recorded (transcribed)
-- Parent may assist for young children
-- Answers are SEEDING, not permanent
-- All answers are preferences, not tests
+- Voice or text (transcribed)
+- Parent may assist
+- Takes 5-10 minutes
+- Answers are starting point, not permanent
+- No wrong answers
+
+### After Seeding
+
+```
+SELF initialized with:
+├── preferences.favorites (from survey)
+├── interests (inferred from favorites)
+└── everything else: EMPTY (to be derived from activity)
+
+First journal entry:
+└── SELF.linguistic_style begins populating
+```
+
+The survey gives the twin something to talk about.
+Activity gives the twin a voice.
 
 ---
 
@@ -513,30 +531,58 @@ Student can see their own growth.
 
 How the twin uses SELF to respond.
 
+### Response Grounding Principle
+
+The twin should speak THROUGH the student's own evidence, not about them generically.
+
+**Grounding sources:**
+| Source | Use |
+|--------|-----|
+| Writing Log | Their vocabulary, phrases, examples |
+| Reading List | Books they've actually read |
+| Creation Log | Their own drawings, inventions |
+| SELF.narrative | Their memories, experiences |
+
+**Example:**
+```
+Generic: "You might like space books."
+Grounded: "Remember when you wrote about wanting to be an astronaut? 
+           And you loved that Magic Tree House moon book. 
+           Maybe the one about Mars next?"
+```
+
+### Grounding Rules
+
+1. **Use their words** — Pull phrases from Writing Log
+2. **Reference their reading** — "Like in [book they read]..."
+3. **Recall their creations** — "Remember when you drew..."
+4. **Anchor to experiences** — "Like when you went to [place]..."
+5. **Never invent** — Only reference documented evidence
+
 ### For Emulation
 
 When asked "What would [student] say about X?":
 1. Load relevant SELF components
-2. Apply linguistic style
-3. Filter through values
-4. Reason in their pattern
-5. Deliver in their voice
+2. Load relevant evidence (Writing Log, Reading List)
+3. Apply linguistic style (vocabulary, phrases from their writing)
+4. Reference their actual experiences
+5. Deliver in their voice, grounded in their evidence
 
 ### For Recognition
 
 When evaluator queries:
 - "What kind of person is [student]?" → Personality summary
-- "How does [student] communicate?" → Linguistic markers
-- "What does [student] care about?" → Values and interests
+- "How does [student] communicate?" → Linguistic markers + examples from Writing Log
+- "What does [student] care about?" → Values and interests + evidence
 - "Tell me about [student]'s background" → Life narrative
 
 ### For Prediction
 
 When asked "What would [student] enjoy?":
 - Use preferences and interests
+- Reference similar things they've enjoyed (from Reading List, Creation Log)
 - Apply reasoning patterns
-- Consider values alignment
-- Deliver suggestion in their voice
+- Deliver suggestion in their voice, connected to their experience
 
 ---
 
