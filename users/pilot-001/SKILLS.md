@@ -48,14 +48,14 @@ notes: "Can produce sentences independently. Phonetic encoding uncertain — key
 ### IMAGINE Container
 
 ```yaml
-status: SEED (from Phase 2 survey)
-originality_level: null   # needs activity evidence
-reasoning_level: 2        # multi-step instructions, sequential thinking (forward + backward)
-flexibility_level: null   # not yet assessed
-elaboration_level: null   # not yet assessed
-edge: "Pattern recognition; cause-effect reasoning; creative narrative production"
+status: ACTIVE (first Tier 4 evidence: CREATE-0001)
+originality_level: 4      # original visual interpretation of text-only Chinese story
+reasoning_level: 2         # multi-step instructions, sequential thinking (forward + backward)
+flexibility_level: 3       # works within story framework but makes own visual choices
+elaboration_level: 4       # detailed — careful color banding, shading, decorative elements, full page
+edge: "Narrative creation from prompts; cross-language creative tasks; independent scene composition"
 gaps: []
-notes: "Draws animals/nature (Phase 2). Imagines talking animal worlds. Lego style is methodical/structured."
+notes: "CREATE-0001 (Nine-Colored Deer) demonstrates: comprehension of text-only Chinese story → original visual interpretation. Confident technique, strong spatial composition, deliberate color choices. Draws animals/nature (confirmed). Chinese cultural content chosen deliberately."
 ```
 
 ### MATH (contextual — not a pillar, but tracked)

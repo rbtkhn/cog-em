@@ -173,6 +173,18 @@ current:
     intensity: 3
     sources: [survey-places]
     notes: "Mexico (Cancún, Los Cabos), China (Anyang), San Diego, The Broadmoor"
+  - topic: Ancient history and civilizations
+    intensity: 3
+    sources: [phase-4-artwork]
+    notes: "Tomb of Pakal (Mayan) — school project. Accurate stepped pyramid, educational labeling."
+  - topic: Space and astronomy
+    intensity: 3
+    sources: [phase-4-artwork]
+    notes: "Drew herself as astronaut on the moon. Loves Van Gogh's Starry Night."
+  - topic: Visual art and artists
+    intensity: 3
+    sources: [phase-4-parent-note]
+    notes: "Loves Van Gogh's Starry Night. Experiments with different media (marker, collage, crayon on black paper)."
 emerging: []
 ```
 
@@ -182,14 +194,24 @@ Derived from: Seed survey (Phase 1, parent-reported)
 
 ## VI. VALUES
 
-Status: AWAITING EVIDENCE
+Status: SEED (from Phase 2 + Phase 4)
 
 ```yaml
-core: []
-inferred_from: []
+core:
+  - kindness
+  - bravery
+  - beauty
+inferred_from:
+  - value: kindness
+    evidence: "Phase 2 Q1 — drawn to stories where friends help each other. Phase 4 — hearts on the deer represent its kindness."
+  - value: bravery
+    evidence: "Phase 4 — deer is 'strong and proud' on the mountain. Likes the deer because it's brave."
+  - value: beauty
+    evidence: "Phase 4 — likes the deer because it's beautiful. Careful, colorful, elaborate artwork."
+notes: "When asked to pick which value matters most (beautiful, kind, or brave), she said 'all of the above.' Holds multiple values simultaneously without ranking."
 ```
 
-Derived from: Reading themes, writing content
+Derived from: Phase 2 survey, Phase 4 artwork Q&A
 
 ---
 
@@ -220,7 +242,7 @@ Status: PARTIAL (from Phase 1 + Phase 2)
 ```yaml
 members: []          # Names not yet captured
 dynamics: null
-notes: "Chinese spoken at home daily (Phase 2 Q5). Family connection to Anyang, China."
+notes: "Chinese spoken at home daily (Phase 2 Q5). Family connection to Anyang, China. Chinese folk tales read at home — text-only books (Phase 4). Active cultural transmission."
 ```
 
 ### Places
@@ -291,6 +313,7 @@ Track what updated SELF and when.
 | 2026-02-09 | Created | Initial | Awaiting survey |
 | 2026-02-09 | Identity, Preferences, Interests | Seed Phase 1 | Parent-reported survey |
 | 2026-02-09 | Personality, Reasoning, Narrative, Interests | Seed Phase 2 | 10-question MC survey (parent-administered) |
+| 2026-02-15 | Values, Interests, Cultural identity | Seed Phase 4 | Artwork analysis + child Q&A (6 pieces: deer, Stitch, Nu-Nu, ocean, Pakal, moon) |
 
 ---
 
