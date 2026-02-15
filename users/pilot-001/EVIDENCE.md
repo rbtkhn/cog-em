@@ -129,19 +129,78 @@ recurring_themes: []
 Movies, shows, games — from survey and activity mentions.
 
 ```yaml
-entries: []
+entries:
+  - id: MEDIA-0001
+    title: Frozen
+    type: movie
+    how_added: survey
+    evidence_tier: 5
+    self_signals:
+      interests: [princesses, magic, sisters, adventure]
+      favorites_candidate: true
 
-# Example entry format:
-# - id: MEDIA-0001
-#   title: "Frozen"
-#   type: movie
-#   times_consumed: 3
-#   first_consumed: 2024-XX-XX
-#   how_added: survey
-#   evidence_tier: 5
-#   self_signals:
-#     interests: [princesses, magic, sisters]
-#     favorites_candidate: true
+  - id: MEDIA-0002
+    title: Thomas the Train
+    type: show
+    how_added: survey
+    evidence_tier: 5
+    self_signals:
+      interests: [trains, friendship, problem-solving]
+      favorites_candidate: true
+
+  - id: MEDIA-0003
+    title: Land Before Time
+    type: movie
+    how_added: survey
+    evidence_tier: 5
+    self_signals:
+      interests: [dinosaurs, friendship, adventure, loss]
+      favorites_candidate: true
+
+  - id: MEDIA-0004
+    title: E.T.
+    type: movie
+    how_added: survey
+    evidence_tier: 5
+    self_signals:
+      interests: [aliens, friendship, wonder, classic film]
+      favorites_candidate: true
+
+  - id: MEDIA-0005
+    title: Moana
+    type: movie
+    how_added: survey
+    evidence_tier: 5
+    self_signals:
+      interests: [adventure, ocean, bravery, identity]
+      favorites_candidate: true
+
+  - id: MEDIA-0006
+    title: Mickey Mouse
+    type: show
+    how_added: survey
+    evidence_tier: 5
+    self_signals:
+      interests: [classic characters, humor, adventure]
+      favorites_candidate: true
+
+  - id: MEDIA-0007
+    title: Paw Patrol
+    type: show
+    how_added: survey
+    evidence_tier: 5
+    self_signals:
+      interests: [animals, dogs, rescue, teamwork]
+      favorites_candidate: true
+
+  - id: MEDIA-0008
+    title: Mulan
+    type: movie
+    how_added: survey
+    evidence_tier: 5
+    self_signals:
+      interests: [bravery, China, family, adventure]
+      favorites_candidate: true
 ```
 
 ---
@@ -198,8 +257,11 @@ total_activities: 0
 total_read_entries: 0
 total_write_entries: 0
 total_create_entries: 0
+total_media_entries: 8
 total_attestations: 0
 last_activity: null
+last_update: 2026-02-09
+update_source: Seed Phase 1 (parent-reported survey)
 ```
 
 ---

@@ -6,10 +6,10 @@ Use during Session 001 to log responses and know where each goes.
 
 ## Pre-Session Checklist
 
-- [ ] SELF.md identity fields filled (name, birthdate, languages, location) — if known
-- [ ] Parent has read docs/PARENT-BRIEF.md
-- [ ] Consent logged in SESSION-LOG.md
-- [ ] Capture method ready (parent typing / voice + transcribe)
+- [x] SELF.md identity fields filled (name, birthdate, languages, location)
+- [x] Parent has read docs/PARENT-BRIEF.md
+- [x] Consent logged in SESSION-LOG.md
+- [x] Capture method ready: parent typing
 
 ---
 
@@ -28,22 +28,26 @@ Use during Session 001 to log responses and know where each goes.
 
 ### Q1: Favorite movies or shows?
 ```
-[Responses]
+Frozen, Thomas the Train, Land Before Time, E.T., Moana, Mickey Mouse, Paw Patrol, Mulan
 ```
 
 ### Q2: Favorite books or stories?
 ```
-[Responses]
+Berenstain Bears, Madeline, Hans Christian Andersen Fairy Tales, Grimm Fairy Tales,
+Clifford the Big Red Dog, The Very Hungry Caterpillar, Coat of Many Colors,
+Hooper Humperdink
 ```
 
 ### Q3: Favorite places?
 ```
-[Responses]
+Elitch Gardens, The Broadmoor, Anyang China, Cancún Mexico, Los Cabos Mexico,
+Paintbrush Park, San Diego
 ```
 
-### Q4: Favorite games?
+### Q4: Favorite play/activities? (substituted for "games")
 ```
-[Responses]
+Gymnastics, soccer, basketball, skateboard, swimming, climbing, trampoline,
+legos, art, drawing
 ```
 
 ---
