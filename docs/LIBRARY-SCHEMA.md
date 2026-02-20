@@ -32,6 +32,7 @@ entries:
     scope: []                     # optional: topics this source covers (for query routing)
     read_id: null                 # optional: READ-XXXX if also in Reading List
     source: manual                # manual | path | url (for future RAG/indexing)
+    pd_url: ""                    # optional: Project Gutenberg, Wikisource, etc.
     added_at: 2026-02-XX
     notes: ""                     # optional
 ```
@@ -51,10 +52,17 @@ entries:
 | **scope** | No | List of topics (e.g. `[space, science, animals]`) for query routing |
 | **read_id** | No | READ-XXXX if this book is in EVIDENCE Reading List |
 | **source** | Yes | `manual` (no indexed content yet), `path`, or `url` for future RAG |
+| **pd_url** | No | URL to complete public domain text (Project Gutenberg, Wikisource) — for retrieval and RAG |
 | **added_at** | Yes | ISO date when added |
 | **notes** | No | Free-form notes |
 
 ---
+
+## pd_url Notes
+
+- For books based on public domain works: add URL to Project Gutenberg or Wikisource.
+- Use for: direct retrieval, RAG indexing, faster lookup, reduced LLM knowledge leak.
+- Author pages (e.g. `gutenberg.org/ebooks/author/37` for Dickens) used for "Complete" collections.
 
 ## ISBN Notes
 
@@ -65,11 +73,11 @@ entries:
 
 ## Lookup Order
 
-When Grace-Mar receives a question:
+When Grace-Mar receives a "look it up" request (Telegram bot):
 
-1. **Query LIBRARY** (active entries only, ordered by priority or scope match)
-2. **If found** → Answer from LIBRARY, rephrase in Grace-Mar's voice
-3. **If not found** → "I haven't learned that yet! do you want me to look it up?" → fall back to full LOOKUP
+1. **Query LIBRARY** (active entries only) — LLM checks if question can be answered from LIBRARY books by scope
+2. **If found** → Answer from LIBRARY, rephrase in Grace-Mar's voice (REPHRASE_PROMPT)
+3. **If not found** (LIBRARY_MISS) → Fall back to full LOOKUP_PROMPT, then REPHRASE
 
 ---
 

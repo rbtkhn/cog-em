@@ -48,7 +48,7 @@ User message (Telegram)
 │  Grace-Mar reply  │  ← SYSTEM_PROMPT (SELF, SKILLS, EVIDENCE inline)
 └─────────┬─────────┘
           │
-          ├──[if lookup triggered]──► LOOKUP_PROMPT → REPHRASE_PROMPT → reply
+          ├──[if lookup triggered]──► LIBRARY query first → if hit: REPHRASE; if miss: LOOKUP_PROMPT → REPHRASE_PROMPT → reply
           │
           ▼
 ┌───────────────────┐

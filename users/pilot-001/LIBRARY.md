@@ -50,6 +50,7 @@ entries:
     type: book
     status: active
     scope: [mythology, Greek myths, ancient Greece]
+    pd_url: "https://www.gutenberg.org/ebooks/22381"
     source: manual
     added_at: 2026-02-20
     notes: "Complete Books. Ordered Sept 2025."
@@ -61,6 +62,7 @@ entries:
     type: book
     status: active
     scope: [mythology, Greek, Odyssey, Homer]
+    pd_url: "https://www.gutenberg.org/ebooks/1727"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -72,6 +74,7 @@ entries:
     type: book
     status: active
     scope: [mythology, India, stories, folktales]
+    pd_url: "https://www.gutenberg.org/ebooks/2388"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -83,6 +86,7 @@ entries:
     type: book
     status: active
     scope: [adventure, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/1184"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -94,6 +98,7 @@ entries:
     type: book
     status: active
     scope: [Bible, stories, religion]
+    pd_url: "https://www.gutenberg.org/ebooks/10"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -105,6 +110,7 @@ entries:
     type: book
     status: active
     scope: [China, stories, folktales]
+    pd_url: "https://www.gutenberg.org/ebooks/25240"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -116,6 +122,7 @@ entries:
     type: book
     status: active
     scope: [mythology, world myths, folktales]
+    pd_url: "https://www.gutenberg.org/ebooks/3327"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -127,6 +134,7 @@ entries:
     type: book
     status: active
     scope: [ballet, dance, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/38733"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -138,6 +146,7 @@ entries:
     type: book
     status: active
     scope: [classics, Secret Garden, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/17396"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -149,6 +158,7 @@ entries:
     type: book
     status: active
     scope: [fables, Aesop, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/21"
     source: manual
     added_at: 2026-02-20
     notes: "Illustrated Story Collections. Ordered Sept 2025."
@@ -160,6 +170,7 @@ entries:
     type: book
     status: active
     scope: [mythology, Greek myths, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/11582"
     source: manual
     added_at: 2026-02-20
     notes: "Illustrated Story Collections. Ordered Sept 2025."
@@ -171,6 +182,7 @@ entries:
     type: book
     status: active
     scope: [mythology, Norse, Vikings, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/28497"
     source: manual
     added_at: 2026-02-20
     notes: "Illustrated Story Collections. Ordered Sept 2025."
@@ -182,6 +194,7 @@ entries:
     type: book
     status: active
     scope: [fairy tales, Hans Christian Andersen, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/27200"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -193,6 +206,7 @@ entries:
     type: book
     status: active
     scope: [King Arthur, legends, stories, mythology]
+    pd_url: "https://www.gutenberg.org/ebooks/610"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -204,6 +218,7 @@ entries:
     type: book
     status: active
     scope: [Shakespeare, plays, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/100"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -215,6 +230,7 @@ entries:
     type: book
     status: active
     scope: [fairy tales, Grimm, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/2591"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -226,6 +242,7 @@ entries:
     type: book
     status: active
     scope: [Dickens, classics, literature]
+    pd_url: "https://www.gutenberg.org/ebooks/author/37"
     source: manual
     added_at: 2026-02-20
     notes: "The Pocket Complete Dickens. Ordered Sept 2025."
@@ -237,6 +254,7 @@ entries:
     type: book
     status: active
     scope: [Arabian Nights, tales, Middle East, stories]
+    pd_url: "https://www.gutenberg.org/ebooks/128"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -248,6 +266,7 @@ entries:
     type: book
     status: active
     scope: [Shakespeare, plays, stories, classics]
+    pd_url: "https://www.gutenberg.org/ebooks/100"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
@@ -259,9 +278,22 @@ entries:
     type: book
     status: active
     scope: [Jane Austen, novels, classics, literature]
+    pd_url: "https://www.gutenberg.org/ebooks/author/68"
     source: manual
     added_at: 2026-02-20
     notes: "Ordered Sept 2025."
+
+  - id: LIB-0024
+    title: "Encyclopædia Britannica (1911)"
+    author: "Various"
+    isbn: ""
+    type: reference
+    status: active
+    scope: [encyclopedia, reference, general knowledge]
+    pd_url: "https://en.wikisource.org/wiki/1911_Encyclop%C3%A6dia_Britannica"
+    source: manual
+    added_at: 2026-02-20
+    notes: "11th edition — most prestigious public domain encyclopedia. Full text on Wikisource."
 ```
 
 ---
@@ -269,7 +301,7 @@ entries:
 ## Metadata
 
 ```yaml
-total_entries: 23
+total_entries: 24
 last_updated: 2026-02-20
 ```
 

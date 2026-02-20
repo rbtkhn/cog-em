@@ -11,6 +11,7 @@ Usage:
 """
 
 import os
+import re
 import logging
 import threading
 import time
@@ -29,7 +30,13 @@ from telegram.ext import (
     ContextTypes,
 )
 
-from prompt import SYSTEM_PROMPT, LOOKUP_PROMPT, REPHRASE_PROMPT, ANALYST_PROMPT
+from prompt import (
+    SYSTEM_PROMPT,
+    LOOKUP_PROMPT,
+    LIBRARY_LOOKUP_PROMPT,
+    REPHRASE_PROMPT,
+    ANALYST_PROMPT,
+)
 
 load_dotenv()
 
@@ -47,6 +54,9 @@ MAX_HISTORY = 20
 PROFILE_DIR = Path(__file__).resolve().parent.parent / "users" / "pilot-001"
 ARCHIVE_PATH = PROFILE_DIR / "GRACE-MAR-BOT-ARCHIVE.md"
 PENDING_REVIEW_PATH = PROFILE_DIR / "PENDING-REVIEW.md"
+LIBRARY_PATH = PROFILE_DIR / "LIBRARY.md"
+
+LIBRARY_MISS = "LIBRARY_MISS"
 
 OPENAI_ANALYST_MODEL = os.getenv("OPENAI_ANALYST_MODEL", "gpt-4o-mini")
 
@@ -93,6 +103,57 @@ def archive(event: str, chat_id: int, text: str) -> None:
         f.write("\n")
 
 
+def _load_library() -> list[dict]:
+    """Load active LIBRARY entries (title, scope) from LIBRARY.md."""
+    if not LIBRARY_PATH.exists():
+        return []
+    content = LIBRARY_PATH.read_text()
+    entries = []
+    for block in re.findall(r"-\s+id:\s+LIB-\d+(.*?)(?=-\s+id:\s+LIB-|\Z)", content, re.DOTALL):
+        title_m = re.search(r'title:\s*["\']([^"\']+)["\']', block)
+        scope_m = re.search(r"scope:\s*\[([^\]]*)\]", block)
+        status_m = re.search(r"status:\s*(\w+)", block)
+        if title_m and (status_m is None or status_m.group(1) == "active"):
+            scope = scope_m.group(1).split(",") if scope_m else []
+            scope = [s.strip() for s in scope if s.strip()]
+            entries.append({"title": title_m.group(1), "scope": scope})
+    return entries
+
+
+def _library_summary() -> str:
+    """Build compact summary of LIBRARY for the prompt."""
+    entries = _load_library()
+    lines = []
+    for e in entries:
+        scope_str = ", ".join(e["scope"]) if e["scope"] else "general"
+        lines.append(f"- {e['title']}: {scope_str}")
+    return "\n".join(lines) if lines else "(no books)"
+
+
+def _library_lookup(question: str) -> str | None:
+    """Try to answer from LIBRARY. Returns answer or None if not in LIBRARY."""
+    summary = _library_summary()
+    if "(no books)" in summary:
+        return None
+    prompt = LIBRARY_LOOKUP_PROMPT.format(
+        library_summary=summary,
+        question=question,
+    )
+    result = get_client().chat.completions.create(
+        model=OPENAI_ANALYST_MODEL,
+        messages=[
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": question},
+        ],
+        max_tokens=200,
+        temperature=0.2,
+    )
+    reply = result.choices[0].message.content.strip()
+    if LIBRARY_MISS in reply:
+        return None
+    return reply
+
+
 def get_client() -> OpenAI:
     global _client
     if _client is None:
@@ -100,8 +161,34 @@ def get_client() -> OpenAI:
     return _client
 
 
+def _lookup_with_library_first(question: str) -> str:
+    """Try LIBRARY first; if not found, fall back to full LLM lookup."""
+    lib_answer = _library_lookup(question)
+    if lib_answer:
+        logger.info("LIBRARY: hit for %s", question[:50])
+        return _rephrase_lookup(question, lib_answer)
+    logger.info("LIBRARY: miss, falling back to full lookup")
+    return lookup(question)
+
+
+def _rephrase_lookup(question: str, facts: str) -> str:
+    """Rephrase factual answer in Grace-Mar's voice."""
+    return get_client().chat.completions.create(
+        model=OPENAI_MODEL,
+        messages=[
+            {"role": "system", "content": REPHRASE_PROMPT},
+            {
+                "role": "user",
+                "content": f"The question was: {question}\n\nThe answer is: {facts}\n\nNow explain this in your own words.",
+            },
+        ],
+        max_tokens=200,
+        temperature=0.9,
+    ).choices[0].message.content
+
+
 def lookup(question: str) -> str:
-    """Two-step process: get factual answer, then rephrase in Grace-Mar's voice."""
+    """Full lookup: get factual answer, then rephrase in Grace-Mar's voice."""
     client = get_client()
 
     factual = client.chat.completions.create(
@@ -212,7 +299,7 @@ def get_response(chat_id: int, user_message: str) -> str:
         logger.info("LOOKUP: %s", question)
         archive("LOOKUP REQUEST", chat_id, question)
 
-        assistant_message = lookup(question)
+        assistant_message = _lookup_with_library_first(question)
 
         history.append({"role": "user", "content": user_message})
         history.append({"role": "assistant", "content": assistant_message})
