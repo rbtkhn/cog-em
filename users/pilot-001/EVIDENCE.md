@@ -882,6 +882,21 @@ activities:
     curiosity_entry: CUR-0002 (inner solar system coloring engagement)
     curated_by: user
     evidence_tier: 2
+
+  - id: ACT-0014
+    date: 2026-02-20
+    modality: physical artifact (school art project — photographed by user)
+    activity_type: art — painted pharaoh portrait
+    mind_category: knowledge + curiosity + personality
+    source: "School art project — painted King Tut-style pharaoh portrait"
+    description: "Full brush painting of Egyptian pharaoh death mask. Gold face and nemes headdress with blue stripes on bold red background. First documented use of paint as medium."
+    medium: paint (brush, thick coverage)
+    colors: [gold/yellow, blue, red]
+    knowledge_entry: LEARN-0024
+    curiosity_entry: CUR-0003
+    personality_entry: PER-0001
+    curated_by: user
+    evidence_tier: 2
 ```
 
 ---
@@ -909,7 +924,7 @@ attestations: []
 ## VII. METRICS
 
 ```yaml
-total_activities: 13
+total_activities: 14
 total_read_entries: 0
 total_write_entries: 3
 total_create_entries: 8

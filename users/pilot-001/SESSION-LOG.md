@@ -662,4 +662,40 @@ source_artifact: Solar system coloring/tracing workbook (123homeschool4me.com)
 
 ---
 
+### Session 014 — Pipeline Batch 6: Pharaoh Painting
+
+**Date:** 2026-02-20
+**Source:** School art project (physical artifact, photographed by user)
+**Pipeline:** Gated profile pipeline — non-bot input
+**Candidates staged:** 3 (CANDIDATE-0038 to CANDIDATE-0040)
+**Decision:** Approve all
+
+**Significance:** First artifact to generate entries in all three mind channels from a single source.
+
+**Approved (Knowledge):**
+
+| ID | Topic | Source |
+|----|-------|--------|
+| LEARN-0024 | Egyptian pharaoh portrait — King Tut's death mask | School art project |
+
+**Approved (Curiosity):**
+
+| ID | Topic | Signal |
+|----|-------|--------|
+| CUR-0003 | Ancient Egypt — deepening engagement | Created painted pharaoh portrait — moving from learning to artistic expression |
+
+**Approved (Personality):**
+
+| ID | Type | Observation |
+|----|------|-------------|
+| PER-0001 | art_medium | First documented use of paint — bold brush painting, full coverage, gold/blue/red, no hesitation |
+
+**Updates made:**
+- SELF.md — LEARN-0024 (IX-A), CUR-0003 (IX-B), PER-0001 (IX-C, first personality entry)
+- EVIDENCE.md — ACT-0014
+- bot/prompt.py — Knowledge, curiosity, personality sections updated; analyst dedup updated
+- PENDING-REVIEW.md — 3 candidates processed
+
+---
+
 END OF FILE — SESSION LOG PILOT-001

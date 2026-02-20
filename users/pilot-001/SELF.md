@@ -551,6 +551,14 @@ entries:
     her_understanding: "The asteroid belt is a ring of rocks between Mars and Jupiter. It separates the rocky planets from the gas planets."
     evidence_id: ACT-0013
     curated_by: user
+
+  - id: LEARN-0024
+    date: 2026-02-20
+    topic: "Egyptian pharaoh portrait — King Tut's death mask"
+    source: school art project (painted at school)
+    her_understanding: "Painted a pharaoh portrait at school — gold face with blue-striped headdress on a red background. King Tut style."
+    evidence_id: ACT-0014
+    curated_by: user
 ```
 
 ### IX-B. CURIOSITY
@@ -580,16 +588,32 @@ entries:
     evidence_id: ACT-0013
     curated_by: user
     notes: "Observational signal from coloring engagement. Strongest connection to Earth. May reflect familiarity, preference, or simply which pages she reached first."
+
+  - id: CUR-0003
+    date: 2026-02-20
+    topic: "Ancient Egypt — deepening engagement"
+    trigger: "School art project — painted pharaoh portrait"
+    response_signal: "Created a full painted portrait of King Tut's death mask. Moving from learning about pharaohs to artistically expressing them."
+    intensity: 3
+    evidence_id: ACT-0014
+    curated_by: user
+    notes: "Ancient history already in seed interests (intensity 3). This signals active creative engagement, not just passive learning."
 ```
 
 ### IX-C. PERSONALITY (Observed)
 
 Post-seed personality signals — how she processes what she observes, emergent traits, speech patterns, and value expressions detected through the observation window.
 
-Status: AWAITING SIGNALS
+Status: ACTIVE
 
 ```yaml
-entries: []
+entries:
+  - id: PER-0001
+    date: 2026-02-20
+    type: art_medium
+    observation: "First documented use of paint as art medium. Full brush painting with thick coverage, bold primary colors (gold, blue, red). Previous documented media: crayon, marker, collage, crayon-on-black-paper. Shows confidence with new tools — filled the entire frame with no hesitation."
+    evidence_id: ACT-0014
+    curated_by: user
 ```
 
 ---
@@ -637,6 +661,7 @@ Track what updated SELF and when.
 | 2026-02-20 | Section IX restructured into three-part MIND model (Knowledge, Curiosity, Personality) | Architecture | Post-seed growth now routes to IX-A/B/C; classical music interest moved to IX-B Curiosity as CUR-0001 |
 | 2026-02-20 | Knowledge (LEARN-0011 to LEARN-0012) | Pipeline batch 4 | Reptiles, no reptiles on Jupiter — 2 approved / 2 rejected, first batch using three-part mind routing |
 | 2026-02-20 | Knowledge (LEARN-0013 to LEARN-0023), Curiosity (CUR-0002) | Pipeline batch 5 | Solar system school workbook — 11 planets/bodies + inner solar system coloring engagement, all 12 approved |
+| 2026-02-20 | Knowledge (LEARN-0024), Curiosity (CUR-0003), Personality (PER-0001) | Pipeline batch 6 | Pharaoh painting — first entry in all three mind channels from a single artifact |
 
 ---
 

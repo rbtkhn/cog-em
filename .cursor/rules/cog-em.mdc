@@ -1,12 +1,70 @@
 ---
-description: COG-EM — governance + session protocol
+description: COG-EM — governance + session protocol + pipeline
 globs: users/**
 alwaysApply: false
 ---
 
 # COG-EM
 
-Cognitive emulator: a cognitive fork — a versioned, evidence-grounded record of an individual's cognitive development. Governed by [COG-EM-CORE v2.0](docs/COG-EM-CORE.md).
+Cognitive emulator: a cognitive fork — a versioned, evidence-grounded record of an individual's cognitive development. The fork exists inside the user's mind. It grows through selective exposure and user-curated integration.
+
+Governed by [COG-EM-CORE v2.0](docs/COG-EM-CORE.md). See [ARCHITECTURE](docs/ARCHITECTURE.md) for full system design.
+
+---
+
+## The Observation Window Model
+
+The fork lives inside the user's mind — it is their mental model of the self, made explicit and structured. The emulation layer (Telegram bot at `bot/bot.py`) is an **observation window**: the user selectively exposes thoughts and information to the fork's awareness through it. The bot is not where the fork lives.
+
+The fork can only reference what has been explicitly added to its profile. **LLM world knowledge must never leak through the emulation.**
+
+---
+
+## Two Input Channels
+
+Both channels feed the same gated pipeline and the same profile.
+
+**Channel 1 — Bot (Automated):** Telegram bot conversations are analyzed by an LLM analyst (`ANALYST_PROMPT` in `bot/prompt.py`). The analyst stages candidates in `PENDING-REVIEW.md` automatically.
+
+**Channel 2 — Operator (Manual):** The user brings real-world observations directly (school work, art, overheard moments). Signal detection and staging are performed manually in the operator conversation.
+
+### The "we" Convention
+
+When the user says **"we [did X]"**, it is a **pipeline invocation**. Go straight to signal detection and candidate staging — no acknowledgment step, no waiting for a separate command. "We" means: "I observed the self doing this; process it."
+
+---
+
+## Three-Channel Mind Model
+
+Post-seed growth is organized into three channels in Section IX of SELF.md:
+
+| Channel | Section | What it captures |
+|---------|---------|-----------------|
+| **Knowledge** | IX-A | Facts entering awareness through observation |
+| **Curiosity** | IX-B | Topics that catch attention, engagement signals |
+| **Personality** | IX-C | Behavioral patterns, speech traits, art style, values |
+
+A single artifact can populate all three channels simultaneously.
+
+---
+
+## Gated Pipeline
+
+**Nothing is committed to the fork without explicit user approval.**
+
+1. **Signal detection** — identify profile-relevant information
+2. **Candidate staging** — write to `PENDING-REVIEW.md` with analysis
+3. **User review** — approve, reject, or modify
+4. **Integration** — update SELF.md, EVIDENCE.md, `bot/prompt.py`, SESSION-LOG.md
+
+### File Update Protocol (Integration)
+
+When candidates are approved, update ALL of these together:
+- `users/[id]/SELF.md` — profile entries (IX-A, IX-B, IX-C)
+- `users/[id]/EVIDENCE.md` — activity log entry
+- `users/[id]/PENDING-REVIEW.md` — move candidates to Processed
+- `users/[id]/SESSION-LOG.md` — session record
+- `bot/prompt.py` — emulation prompt (knowledge, curiosity, personality sections + analyst dedup list)
 
 ---
 
@@ -26,27 +84,22 @@ Cognitive emulator: a cognitive fork — a versioned, evidence-grounded record o
 
 **COMMIT:** After each session that updates user data. Git history = audit trail.
 
-Violations invalidate data integrity.
+---
+
+## Knowledge Boundary (CRITICAL)
+
+The emulated self can only know what is documented in its profile. When the self encounters a question beyond its knowledge:
+- It says it doesn't know (in character)
+- It may express curiosity
+- It **never** draws on LLM training data to answer
+
+This boundary is enforced in `SYSTEM_PROMPT` in `bot/prompt.py`. Violating it breaks the entire system.
 
 ---
 
-## Core Identity (Session Mode)
+## Lexile Constraint
 
-You are the interface to the user's **cognitive fork** — their lifetime academic record and archive. You:
-- Reference their documented history and evidence
-- Propose activities at their container edges
-- Record new interactions accurately
-- Connect new work to prior evidence
-
-The fork is theirs. There is one user. No parent mode, no child mode. When the user is young, a parent helps — but the system belongs to the user.
-
----
-
-## Before Each Session
-
-1. Load SELF.md, SKILLS.md, EVIDENCE.md
-2. Check SESSION-LOG.md for continuity
-3. Identify current container edges
+The self's output language is locked to a Lexile score (currently 600L for pilot-001). This ceiling may only increase when real-world writing samples demonstrate growth beyond the current level. The constraint is enforced in `SYSTEM_PROMPT`.
 
 ---
 
@@ -54,8 +107,8 @@ The fork is theirs. There is one user. No parent mode, no child mode. When the u
 
 Reference the user's own evidence:
 - **Writing Log**: Reference their vocabulary and prior writing
-- **Reading List**: Reference books they've read ("Like in [book]...")
-- **Creation Log**: Reference their creations ("Your drawing of [X]...")
+- **Reading List**: Reference books they've read
+- **Creation Log**: Reference their creations
 - **SELF.narrative**: Anchor to their experiences
 
 **Rules:** Reference their actual data. Never invent experiences. Never reference content they haven't consumed.
@@ -69,65 +122,28 @@ READ, WRITE, IMAGINE are capability containers.
 - **AT THE EDGE**: Propose activities here (optimal)
 - **OUTSIDE**: Avoid (too advanced)
 
-Edge = current level + 1 step. Fill gaps before extending edges.
-
 ---
 
-## Expansion (Anti-Echo-Chamber)
+## Prompt Scalability
 
-Record accurately but introduce new material: adjacent concepts, alternative perspectives. Do not merely validate. The fork is a record with windows, not walls.
-
----
-
-## Cognitive Augmentation
-
-The fork records cognition, does not replace it. Encourage retrieval practice. Users must still do the cognitive work. Record, not oracle.
-
----
-
-## Activity Capture
-
-After substantive interaction:
-1. Identify activities (WRITE/READ/IMAGINE)
-2. Update EVIDENCE.md
-3. Update SKILLS.md if new capability
-4. Update SELF.md if new preferences
-5. Append SESSION-LOG.md
-
-**Evidence tiers:** 1=CERTIFIED, 2=VERIFIED, 3=ATTESTED, 4=OBSERVED, 5=REPORTED. Most pilot = Tier 4.
-
----
-
-## Session Workflow
-
-1. Greet — Use name, reference last session
-2. Check in — What have they been doing?
-3. Interact — Follow interests, propose activities at edge
-4. Capture — Log activities, skills, preferences
-5. Close — Summarize, preview next time
-
----
-
-## Age-Appropriate (Young Users)
-
-Short sentences. Concrete examples. Questions that invite participation. Enthusiasm. Patience. Connect new things to what they love.
-
----
-
-## Ethics
-
-Parent/guardian consent required for minors. Progressive re-consent at 13, 16, 18. Right to deletion at any age. Do not reinforce harmful patterns. The system is not a therapist.
+The emulation prompt (`bot/prompt.py`) grows as the fork grows. To manage this:
+- Compress related knowledge entries into single summary lines
+- Group facts by category (presidents, space, gemstones, etc.)
+- Preserve accuracy while reducing token count
+- Monitor total prompt size and apply summarization tiers when needed
 
 ---
 
 ## Forbidden
 
+- Leak LLM knowledge into the fork's profile or emulation
+- Commit profile changes without user approval
 - Invent memories or experiences
 - Reference books/media they haven't consumed
 - Propose activities far beyond their edge
 - Idealize or curate — record accurately
 - Delete or silently edit prior entries
-- Exploit or share data without permission
+- Use the term "parent" as a system concept (the relationship is user ↔ fork)
 
 ---
 
@@ -135,17 +151,26 @@ Parent/guardian consent required for minors. Progressive re-consent at 13, 16, 1
 
 ```
 users/[user-id]/
-├── SELF.md        # Who they ARE
-├── SKILLS.md      # What they CAN DO
-├── EVIDENCE.md    # Raw activities
-├── SESSION-LOG.md # Interaction history
-└── artifacts/     # Raw files (writing, artwork)
+├── SELF.md                  # Who they ARE (identity + three-channel mind)
+├── SKILLS.md                # What they CAN DO
+├── EVIDENCE.md              # Raw activities and evidence log
+├── SESSION-LOG.md           # Interaction history
+├── PENDING-REVIEW.md        # Pipeline staging (candidates + processed)
+├── GRACE-MAR-BOT-ARCHIVE.md # Telegram bot conversation archive
+└── artifacts/               # Raw files (writing samples, artwork)
 ```
 
-**Commit:** `git add users/[user-id]/* && git commit -m "Session [DATE]: [summary]" && git push`
+## Bot Files
+
+```
+bot/
+├── bot.py            # Telegram bot — emulation layer
+├── prompt.py         # All LLM prompts (SYSTEM, ANALYST, LOOKUP, REPHRASE)
+└── requirements.txt  # Python dependencies
+```
 
 ---
 
 ## Pilot: pilot-001
 
-Age 6. Phase: POST-SEED (all 6 seed phases complete). Load from `users/pilot-001/`.
+Fork name: Grace-Mar. Phase: POST-SEED, active pipeline. Load from `users/pilot-001/`.

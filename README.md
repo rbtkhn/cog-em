@@ -1,77 +1,110 @@
 # cog-em
 
-**Cognitive Emulator** — A system where students teach an AI that grows to emulate their mind.
+**Cognitive Emulator** — A system that creates and maintains cognitive forks: versioned, evidence-grounded records of an individual's cognitive development, initialized from a real person and growing through curated interactions over a lifetime.
 
 ## Concept
 
-The student teaches the system what they know. The system grows only as the student progresses. Over years, it becomes a cognitive twin: an externalized, queryable representation of the student's knowledge, reasoning patterns, and intellectual personality.
+The cognitive fork exists inside the user's mind — their mental model of an individual, made explicit and structured. It captures who the person is (identity, personality, voice) and what they can do (skills, knowledge, creative capability). Over time, the fork becomes a living cognitive record that can be queried, emulated, and preserved.
 
-Unlike traditional education tools that teach students, cog-em inverts the relationship: **the student is the teacher**.
-
-## Core Differentiators
-
-- **Direction**: Student teaches system (not system teaches student)
-- **Function**: Living credential (diploma + CV that can be queried)
-- **Portability**: Cross-border, cross-curriculum, cross-age
-- **Duration**: 12+ year relationship (childhood → career)
-- **Depth**: Captures *how* you think, not just *what* you know
-
-## Status
-
-**Phase**: Pre-pilot  
-**Target**: Solo pilot with 1 student (age 6), 2 months
+The fork grows only through what the user explicitly provides. An optional emulation layer (currently a Telegram bot) acts as an observation window — a channel through which the user selectively exposes thoughts and information to the fork's awareness.
 
 ## Architecture
 
-The cognitive twin has two core modules:
+Two core modules define the fork:
 
-| Module | Contains | Analogue |
-|--------|----------|----------|
-| **SELF** | Personality, preferences, linguistic style, values, reasoning patterns | CMC's MIND files |
-| **SKILLS** | Academic knowledge, practical abilities, creative works, domain expertise | CMC's MEM files |
+| Module | Contains | Purpose |
+|--------|----------|---------|
+| **SELF** | Personality, linguistic style, life narrative, preferences, values, reasoning patterns | Who they ARE |
+| **SKILLS** | READ, WRITE, IMAGINE capability containers | What they CAN DO |
+
+Post-seed growth is organized into a **three-channel mind model**:
+
+| Channel | What it captures |
+|---------|-----------------|
+| **Knowledge** (IX-A) | Facts entering awareness through observation |
+| **Curiosity** (IX-B) | Topics that catch attention, engagement signals |
+| **Personality** (IX-C) | Observed behavioral patterns, art style, speech traits |
 
 See [Architecture](docs/ARCHITECTURE.md) for full details.
+
+## Gated Pipeline
+
+All profile changes pass through a user-controlled gate:
+
+1. **Signal detection** — identify knowledge, curiosity, and personality signals from input
+2. **Candidate staging** — structured proposals written to PENDING-REVIEW.md
+3. **User review** — approve, reject, or modify each candidate
+4. **Integration** — approved changes committed across profile, evidence, prompt, and session log
+
+Two input channels feed the pipeline:
+- **Bot (automated)** — Telegram conversations analyzed by an LLM analyst
+- **Operator (manual)** — real-world observations (school work, art, conversations) brought directly by the user
+
+## Status
+
+**Phase:** Pilot (post-seed, active pipeline)
+**Pilot user:** pilot-001 (fork name: Grace-Mar)
+**Seeding:** Complete (6 phases — identity, personality, academics, creativity, writing voice, core personality)
+**Emulation:** Active via Telegram bot
+**Pipeline:** Active — knowledge, curiosity, and personality channels populated
 
 ## Repository Structure
 
 ```
 cog-em/
-├── README.md                    # This file
+├── README.md                        # This file
+├── AGENTS.md                        # AI coding assistant guardrails
+├── COG-EM-BOOTSTRAP.md              # Session bootstrap for Cursor
+├── .cursor/rules/cog-em.mdc         # Cursor-specific governance rule
 ├── docs/
-│   ├── COG-EM-CORE.md          # System core governance (canonical)
-│   ├── ARCHITECTURE.md         # SELF + SKILLS module design
-│   ├── SELF-TEMPLATE.md        # SELF module governance
-│   ├── SKILLS-TEMPLATE.md      # SKILLS module governance
-│   ├── EVIDENCE-TEMPLATE.md    # Evidence storage & reading list
-│   ├── CONCEPT.md              # Full concept explanation
-│   ├── PILOT-PLAN.md           # 2-month pilot structure
-│   ├── COMPETITIVE-ANALYSIS.md # Market landscape
-│   ├── ANTI-CHEATING.md        # Verification framework
-│   ├── DIFFERENTIATION.md      # Competitive moats
-│   ├── TEAM.md                 # Hiring plan
-│   └── LETTER-TO-STUDENT.md    # Letter to first pilot student
-├── users/
-│   └── pilot-001/              # First pilot user (6-year-old student)
-│       ├── SELF.md             # Personality profile
-│       ├── SKILLS.md           # Capability containers
-│       ├── EVIDENCE.md         # Reading/Writing/Creation logs
-│       └── SESSION-LOG.md      # Interaction history
-├── app/                        # Future: iPad app
-├── backend/                    # Future: API/services
-└── research/
-    └── pilot-notes/            # Pilot observations
+│   ├── COG-EM-CORE.md               # Canonical governance (v2.0)
+│   ├── ARCHITECTURE.md              # Full system architecture
+│   ├── SELF-TEMPLATE.md             # SELF module template
+│   ├── SKILLS-TEMPLATE.md           # SKILLS module template
+│   ├── EVIDENCE-TEMPLATE.md         # EVIDENCE module template
+│   ├── CONCEPT.md                   # Full concept explanation
+│   ├── PILOT-PLAN.md                # Pilot structure
+│   ├── COMPETITIVE-ANALYSIS.md      # Market landscape
+│   ├── DIFFERENTIATION.md           # Competitive moats
+│   ├── ANTI-CHEATING.md             # Verification framework
+│   ├── TEAM.md                      # Hiring plan
+│   └── LETTER-TO-STUDENT.md         # Letter to first pilot student
+├── bot/
+│   ├── bot.py                       # Telegram bot — emulation layer
+│   ├── prompt.py                    # LLM prompts (SYSTEM, ANALYST, LOOKUP, REPHRASE)
+│   └── requirements.txt             # Python dependencies
+└── users/
+    └── pilot-001/                   # First pilot user
+        ├── SELF.md                  # Identity + three-channel mind
+        ├── SKILLS.md                # Capability containers
+        ├── EVIDENCE.md              # Activity log
+        ├── SESSION-LOG.md           # Interaction history
+        ├── PENDING-REVIEW.md        # Pipeline staging
+        ├── GRACE-MAR-BOT-ARCHIVE.md # Bot conversation archive
+        ├── artifacts/               # Raw files (writing, artwork)
+        ├── SEED-PHASE-2-SURVEY.md   # Seed phase 2 survey data
+        ├── SEED-PHASE-3-SURVEY.md   # Seed phase 3 survey data
+        └── SURVEY-CAPTURE.md        # Survey capture data
 ```
 
-## Quick Links
+## Key Documents
 
-- [COG-EM-CORE](docs/COG-EM-CORE.md) — **System core governance (canonical)**
-- [Architecture](docs/ARCHITECTURE.md) — SELF + SKILLS module design
-- [SELF Template](docs/SELF-TEMPLATE.md) — Personality module governance
-- [SKILLS Template](docs/SKILLS-TEMPLATE.md) — Capability module governance
-- [Evidence Template](docs/EVIDENCE-TEMPLATE.md) — Evidence storage, reading list, attestations
-- [Full Concept](docs/CONCEPT.md)
-- [Pilot Plan](docs/PILOT-PLAN.md)
-- [Competitive Analysis](docs/COMPETITIVE-ANALYSIS.md)
+| Document | Purpose |
+|----------|---------|
+| [COG-EM-CORE](docs/COG-EM-CORE.md) | Canonical governance — absolute authority |
+| [Architecture](docs/ARCHITECTURE.md) | Full system design including observation window, pipeline, mind model |
+| [AGENTS.md](AGENTS.md) | Guardrails for AI coding assistants |
+| [Concept](docs/CONCEPT.md) | Full concept explanation |
+| [Pilot Plan](docs/PILOT-PLAN.md) | Two-month pilot structure |
+
+## For AI Coding Assistants
+
+Read [AGENTS.md](AGENTS.md) before making any changes. Critical constraints:
+
+- **Never leak LLM knowledge** into the fork's profile or emulation
+- **Never commit profile changes** without user approval through the gated pipeline
+- **"We [did X]"** from the user is a pipeline invocation — go straight to signal detection
+- **Update all affected files together** when integrating approved candidates
 
 ## License
 

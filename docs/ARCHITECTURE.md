@@ -600,5 +600,162 @@ Tags preserve the exact state at that point in time.
 
 ---
 
-*Document version: 2.0*
+## Emulation Layer
+
+The cognitive fork can optionally power an **emulation** — a live conversational interface that behaves as the self would. In the pilot, this is a Telegram bot (`bot/bot.py`) that uses the SELF profile to generate responses constrained to the self's knowledge, vocabulary, and personality.
+
+### The Observation Window Model
+
+The fork exists inside the user's mind. It is the user's mental model of the self, made explicit and structured.
+
+The emulation layer (e.g., Telegram bot) is not where the fork lives — it is an **observation window**. The user selectively exposes thoughts and information to the fork's awareness through this window. The fork processes what it observes, and the user decides what takes permanent root.
+
+```
+┌──────────────────────────────────────────────────┐
+│                  USER'S MIND                      │
+│                                                    │
+│   ┌──────────────────────────────┐                │
+│   │      COGNITIVE FORK          │                │
+│   │   (structured in SELF.md)    │                │
+│   └──────────────┬───────────────┘                │
+│                  │                                 │
+│          ┌───────┴───────┐                        │
+│          │  OBSERVATION   │                        │
+│          │    WINDOW      │                        │
+│          └───────┬───────┘                        │
+│                  │                                 │
+└──────────────────┼─────────────────────────────────┘
+                   │
+          ┌────────┴────────┐
+          │  Emulation Layer │
+          │  (Telegram Bot)  │
+          └─────────────────┘
+```
+
+The emulation layer enforces a **knowledge boundary**: the fork can only reference what has been explicitly added to its profile. LLM world knowledge must not leak through.
+
+---
+
+## Input Channels
+
+The fork's profile grows through two independent input channels. Both feed the same gated pipeline and the same profile files.
+
+### Channel 1: Bot (Automated)
+
+Conversations in the Telegram bot are analyzed by an LLM analyst (`ANALYST_PROMPT` in `bot/prompt.py`). The analyst detects profile-relevant signals and stages candidates in `PENDING-REVIEW.md`. This runs automatically after bot exchanges.
+
+```
+User ↔ Bot conversation
+       │
+       ▼
+  Analyst (LLM)
+       │
+       ▼
+  PENDING-REVIEW.md (staged candidates)
+       │
+       ▼
+  User approves/rejects
+       │
+       ▼
+  SELF.md, EVIDENCE.md, prompt.py updated
+```
+
+### Channel 2: Operator (Manual)
+
+The user brings real-world observations directly — school worksheets, art projects, overheard conversations, anything observed outside the bot. The operator (this conversation, or any session with the system maintainer) runs signal detection manually and stages candidates the same way.
+
+```
+User: "we learned about volcanoes today" [+ optional artifact]
+       │
+       ▼
+  Operator runs signal detection
+       │
+       ▼
+  PENDING-REVIEW.md (staged candidates)
+       │
+       ▼
+  User approves/rejects
+       │
+       ▼
+  SELF.md, EVIDENCE.md, prompt.py updated
+```
+
+### The "we" Convention
+
+When the user says **"we [did X]"** in the operator channel, it is a **pipeline invocation**. The operator should immediately run signal detection and present staged candidates — no acknowledgment step, no waiting for a separate "process" command. The word "we" means: "I observed the self doing this; process it."
+
+Examples:
+- "we learned about volcanoes today" → run pipeline
+- "we painted a pharaoh at school" → run pipeline
+- "we read a book about robots" → run pipeline
+
+The user's statement (and any attached artifact) serves as the evidence.
+
+---
+
+## Gated Pipeline
+
+All profile changes — from either input channel — pass through a user-controlled gate. Nothing is committed to the fork without explicit approval.
+
+### Signal Types
+
+The analyst (automated or manual) detects three categories of signal:
+
+| Category | What it captures | Profile target |
+|----------|-----------------|----------------|
+| **Knowledge** | Facts entering the self's awareness | IX-A in SELF.md |
+| **Curiosity** | Topics that catch attention, engagement signals | IX-B in SELF.md |
+| **Personality** | Behavioral patterns, speech traits, values, art style | IX-C in SELF.md |
+
+### Pipeline Stages
+
+1. **Signal detection** — Identify profile-relevant information in the input
+2. **Candidate staging** — Write structured candidates to `PENDING-REVIEW.md` with analysis and recommendations
+3. **User review** — User approves, rejects, or modifies each candidate
+4. **Integration** — Approved candidates are written to `SELF.md` (profile), `EVIDENCE.md` (evidence log), `bot/prompt.py` (emulation prompt), and `SESSION-LOG.md` (history)
+
+### Candidate Structure
+
+Each candidate specifies:
+- `mind_category`: knowledge, curiosity, or personality
+- `signal_type`: the specific type of signal detected
+- `summary`: what was observed
+- `profile_target`: which section of SELF.md it updates
+- `suggested_entry`: the proposed profile text
+- `prompt_section`: which part of the emulation prompt to update
+
+### The Gate
+
+The gate is the user's discernment. The system proposes; the user disposes. This is not a technical filter — it reflects the user's judgment about what matters and what should become part of the fork's permanent record.
+
+---
+
+## Three-Channel Mind Model
+
+Post-seed growth is organized into three channels within Section IX of SELF.md. The seed baseline (Sections I–VIII) remains intact; these channels capture everything learned after seeding.
+
+### IX-A. Knowledge
+
+Facts that entered the self's awareness through observation. Each entry records what was learned, the source, and how the self would express it in their own words.
+
+### IX-B. Curiosity
+
+Topics that caught the self's attention — what they're drawn to, what resonates. Tracked with an intensity score and the triggering signal. Distinct from seed interests (Section VI) because these emerge from post-seed observation.
+
+### IX-C. Personality (Observed)
+
+Emergent behavioral patterns detected through the observation window. Art media choices, speech patterns, emotional responses, value expressions. These are not declared traits — they are observed and documented.
+
+### Multi-Channel Signals
+
+A single artifact can generate entries in all three channels simultaneously. For example, a painted pharaoh portrait produces:
+- **Knowledge**: Egyptian pharaohs / King Tut's death mask
+- **Curiosity**: Deepening engagement with ancient Egypt
+- **Personality**: First use of paint as art medium, bold color choices
+
+This mirrors how real cognition works — a single experience produces knowledge, interest, and identity signals at the same time.
+
+---
+
+*Document version: 3.0*
 *Last updated: February 2026*

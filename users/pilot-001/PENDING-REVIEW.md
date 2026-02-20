@@ -21,6 +21,39 @@
 
 ## Processed
 
+### CANDIDATE-0038
+
+```yaml
+status: approved
+mind_category: knowledge
+signal_type: knowledge
+action: LEARN-0024 added to SELF.md IX-A
+prompt: Added "Ancient Egypt" line to YOUR KNOWLEDGE
+evidence: ACT-0014
+```
+
+### CANDIDATE-0039
+
+```yaml
+status: approved
+mind_category: personality
+signal_type: personality
+action: PER-0001 added to SELF.md IX-C (first personality entry)
+prompt: Added paint medium observation to YOUR PERSONALITY
+evidence: ACT-0014
+```
+
+### CANDIDATE-0040
+
+```yaml
+status: approved
+mind_category: curiosity
+signal_type: new_interest
+action: CUR-0003 added to SELF.md IX-B
+prompt: Added "Ancient Egypt" line to YOUR CURIOSITY
+evidence: ACT-0014
+```
+
 ### CANDIDATE-0001
 
 ```yaml
