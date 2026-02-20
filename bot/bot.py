@@ -13,6 +13,7 @@ Usage:
 import os
 import logging
 import threading
+import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -49,7 +50,14 @@ PENDING_REVIEW_PATH = PROFILE_DIR / "PENDING-REVIEW.md"
 
 OPENAI_ANALYST_MODEL = os.getenv("OPENAI_ANALYST_MODEL", "gpt-4o-mini")
 
+# Rate limiting: per chat, per hour
+RATE_LIMIT_WINDOW = int(os.getenv("RATE_LIMIT_WINDOW_SEC", "3600"))
+RATE_LIMIT_MAIN = int(os.getenv("RATE_LIMIT_MAIN", "60"))
+RATE_LIMIT_ANALYST = int(os.getenv("RATE_LIMIT_ANALYST", "120"))
+
 _candidate_counter_lock = threading.Lock()
+_rate_limit_lock = threading.Lock()
+_rate_counters: dict[tuple[int, str], list[float]] = defaultdict(list)
 
 LOOKUP_TRIGGER = "do you want me to look it up"
 AFFIRMATIVE_WORDS = {"yes", "yeah", "yea", "yep", "sure", "ok", "okay", "please", "ya", "y"}
@@ -58,6 +66,22 @@ AFFIRMATIVE_PHRASES = {"look it up", "go ahead", "do it", "go for it", "find out
 _client = None
 conversations: dict[int, list[dict]] = defaultdict(list)
 pending_lookups: dict[int, str] = {}
+
+
+def _check_rate_limit(chat_id: int, bucket: str, tokens: int = 1) -> bool:
+    """Check and consume rate limit. Returns False if over limit (and does not consume)."""
+    now = time.time()
+    window_start = now - RATE_LIMIT_WINDOW
+    limit = RATE_LIMIT_MAIN if bucket == "main" else RATE_LIMIT_ANALYST
+    key = (chat_id, bucket)
+    with _rate_limit_lock:
+        times = _rate_counters[key]
+        times[:] = [t for t in times if t > window_start]
+        if len(times) + tokens > limit:
+            return False
+        for _ in range(tokens):
+            times.append(now)
+    return True
 
 
 def archive(event: str, chat_id: int, text: str) -> None:
@@ -117,6 +141,9 @@ def _next_candidate_id() -> str:
 
 def analyze_exchange(user_message: str, assistant_message: str, chat_id: int) -> None:
     """Run the profile analyst on an exchange. Stages a candidate if a signal is found."""
+    if not _check_rate_limit(chat_id, "analyst", tokens=1):
+        logger.debug("Analyst rate limit exceeded (chat %s), skipping", chat_id)
+        return
     try:
         result = get_client().chat.completions.create(
             model=OPENAI_ANALYST_MODEL,
@@ -179,6 +206,9 @@ def get_response(chat_id: int, user_message: str) -> str:
 
     if chat_id in pending_lookups and is_affirmative:
         question = pending_lookups.pop(chat_id)
+        if not _check_rate_limit(chat_id, "main", tokens=2):
+            logger.warning("Rate limit exceeded (main, chat %s)", chat_id)
+            return "i'm a little tired right now. can we talk more in a bit?"
         logger.info("LOOKUP: %s", question)
         archive("LOOKUP REQUEST", chat_id, question)
 
@@ -202,6 +232,10 @@ def get_response(chat_id: int, user_message: str) -> str:
 
     if len(history) > MAX_HISTORY:
         history[:] = history[-MAX_HISTORY:]
+
+    if not _check_rate_limit(chat_id, "main", tokens=1):
+        logger.warning("Rate limit exceeded (main, chat %s)", chat_id)
+        return "i'm a little tired right now. can we talk more in a bit?"
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}] + history
 

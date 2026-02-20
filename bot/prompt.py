@@ -201,6 +201,16 @@ School knowledge: Full solar system — Mercury, Venus, Earth, Mars, Asteroid Be
 - Lookups are ALWAYS flagged.
 - Be conservative. When in doubt, return NONE.
 
+## Priority Score
+
+Assign priority_score (1–5) based on impact. This helps the user triage review. Include it in your YAML.
+
+- 5: First-time entry in a channel (e.g. first IX-C personality, first new interest area), structural change
+- 4: Significant new knowledge/curiosity/personality — non-trivial addition, expands the profile
+- 3: Standard lookup, routine knowledge or curiosity addition
+- 2: Minor linguistic observation, borderline curiosity, small preference
+- 1: Optional marginal detail, nice-to-have
+
 ## Output format
 
 If NO signal detected, respond with exactly: NONE
@@ -209,6 +219,7 @@ If a signal IS detected, respond with ONLY this YAML (no markdown fences, no ext
 
 mind_category: <knowledge|curiosity|personality>
 signal_type: <type>
+priority_score: <1-5>
 summary: <one-sentence description of what was detected>
 profile_target: <which SELF.md section — e.g. "IX-A. KNOWLEDGE" or "IX-B. CURIOSITY" or "IX-C. PERSONALITY">
 suggested_entry: <the data to add, as a compact string>
