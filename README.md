@@ -68,7 +68,13 @@ cog-em/
 │   ├── DIFFERENTIATION.md           # Competitive moats
 │   ├── ANTI-CHEATING.md             # Verification framework
 │   ├── TEAM.md                      # Hiring plan
+│   ├── PIPELINE-MAP.md              # Flow diagrams, gaps, feedback loops
+│   ├── FRICTION-AUDIT.md            # Top friction points and interventions
+│   ├── ID-TAXONOMY.md               # Identifier prefixes and relationships
+│   ├── CONTRADICTION-RESOLUTION.md  # Conflict resolution format (spec)
 │   └── LETTER-TO-STUDENT.md         # Letter to first pilot student
+├── scripts/
+│   └── validate-integrity.py        # Integrity validator
 ├── bot/
 │   ├── bot.py                       # Telegram bot — emulation layer
 │   ├── prompt.py                    # LLM prompts (SYSTEM, ANALYST, LOOKUP, REPHRASE)
@@ -96,6 +102,16 @@ cog-em/
 | [AGENTS.md](AGENTS.md) | Guardrails for AI coding assistants |
 | [Concept](docs/CONCEPT.md) | Full concept explanation |
 | [Pilot Plan](docs/PILOT-PLAN.md) | Two-month pilot structure |
+
+## Validation
+
+Run the integrity validator to check evidence references, SELF structure, and PENDING-REVIEW format:
+
+```bash
+python scripts/validate-integrity.py
+```
+
+See [docs/ID-TAXONOMY.md](docs/ID-TAXONOMY.md) for identifier prefixes and relationships.
 
 ## For AI Coding Assistants
 
