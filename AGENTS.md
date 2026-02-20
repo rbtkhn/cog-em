@@ -85,13 +85,13 @@ A single artifact can populate all three channels.
 ## Repository Structure
 
 ```
-cog-em/
+grace-mar/
 ├── AGENTS.md                    # This file — AI assistant guardrails
 ├── README.md                    # Project overview
-├── COG-EM-BOOTSTRAP.md          # Session bootstrap for Cursor
-├── .cursor/rules/cog-em.mdc    # Cursor-specific governance rule
+├── GRACE-MAR-BOOTSTRAP.md       # Session bootstrap for Cursor
+├── .cursor/rules/grace-mar.mdc  # Cursor-specific governance rule
 ├── docs/
-│   ├── COG-EM-CORE.md          # Canonical governance (v2.0)
+│   ├── GRACE-MAR-CORE.md       # Canonical governance (v2.0)
 │   ├── CONCEPTUAL-FRAMEWORK.md # Fork vs. twin, emulation, terminology (AI parsing)
 │   ├── ARCHITECTURE.md         # Full system architecture
 │   ├── SELF-TEMPLATE.md        # SELF module template

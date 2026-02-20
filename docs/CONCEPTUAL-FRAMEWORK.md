@@ -1,14 +1,14 @@
-# Conceptual Framework — cog-em
+# Conceptual Framework — grace-mar
 
 **Purpose:** Encode the core distinctions so future AIs and developers can understand the system with minimal effort.
 
-**Authority:** Subordinate to COG-EM-CORE v2.0. No file may contradict COG-EM-CORE.
+**Authority:** Subordinate to GRACE-MAR-CORE v2.0. No file may contradict GRACE-MAR-CORE.
 
 ---
 
 ## 1. Cognitive Fork vs. Cognitive Twin
 
-| Term | Meaning | cog-em uses? |
+| Term | Meaning | grace-mar uses? |
 |------|---------|--------------|
 | **Cognitive fork** | Versioned branch from a snapshot. Diverges by design. Has its own history. Like a software fork. | ✓ Yes |
 | **Cognitive twin** | Parallel copy, mirror, real-time replica. Stays in sync with the original. | ✗ No |
@@ -66,12 +66,12 @@
 ## 6. File Map for AI Parsing
 
 ```
-AGENTS.md              → AI guardrails, rules, what not to do
+AGENTS.md                  → AI guardrails, rules, what not to do
 docs/CONCEPTUAL-FRAMEWORK.md → This file — core distinctions
-docs/COG-EM-CORE.md    → Canonical governance (absolute authority)
-docs/ARCHITECTURE.md   → Full system design
-COG-EM-BOOTSTRAP.md   → Session bootstrap, quick start
-.cursor/rules/cog-em.mdc → Cursor-specific rule (users/**)
+docs/GRACE-MAR-CORE.md     → Canonical governance (absolute authority)
+docs/ARCHITECTURE.md       → Full system design
+GRACE-MAR-BOOTSTRAP.md     → Session bootstrap, quick start
+.cursor/rules/grace-mar.mdc → Cursor-specific rule (users/**)
 ```
 
 ---

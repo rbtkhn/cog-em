@@ -1,6 +1,6 @@
-# cog-em
+# grace-mar
 
-**Cognitive Emulator** — A system that creates and maintains cognitive forks: versioned, evidence-grounded records of an individual's cognitive development, initialized from a real person and growing through curated interactions over a lifetime.
+**Grace-Mar** — A system that creates and maintains cognitive forks: versioned, evidence-grounded records of an individual's cognitive development, initialized from a real person and growing through curated interactions over a lifetime.
 
 ## Concept
 
@@ -51,13 +51,13 @@ Two input channels feed the pipeline:
 ## Repository Structure
 
 ```
-cog-em/
+grace-mar/
 ├── README.md                        # This file
 ├── AGENTS.md                        # AI coding assistant guardrails
-├── COG-EM-BOOTSTRAP.md              # Session bootstrap for Cursor
-├── .cursor/rules/cog-em.mdc         # Cursor-specific governance rule
+├── GRACE-MAR-BOOTSTRAP.md           # Session bootstrap for Cursor
+├── .cursor/rules/grace-mar.mdc      # Cursor-specific governance rule
 ├── docs/
-│   ├── COG-EM-CORE.md               # Canonical governance (v2.0)
+│   ├── GRACE-MAR-CORE.md            # Canonical governance (v2.0)
 │   ├── ARCHITECTURE.md              # Full system architecture
 │   ├── SELF-TEMPLATE.md             # SELF module template
 │   ├── SKILLS-TEMPLATE.md           # SKILLS module template
@@ -97,7 +97,7 @@ cog-em/
 
 | Document | Purpose |
 |----------|---------|
-| [COG-EM-CORE](docs/COG-EM-CORE.md) | Canonical governance — absolute authority |
+| [GRACE-MAR-CORE](docs/GRACE-MAR-CORE.md) | Canonical governance — absolute authority |
 | [Architecture](docs/ARCHITECTURE.md) | Full system design including observation window, pipeline, mind model |
 | [AGENTS.md](AGENTS.md) | Guardrails for AI coding assistants |
 | [Concept](docs/CONCEPT.md) | Full concept explanation |
