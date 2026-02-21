@@ -234,7 +234,7 @@ def collect_data() -> DashboardData:
     self_path = PROFILE_DIR / "SELF.md"
     evidence_path = PROFILE_DIR / "EVIDENCE.md"
     skills_path = PROFILE_DIR / "SKILLS.md"
-    archive_path = PROFILE_DIR / "TELEGRAM-ARCHIVE.md"
+    archive_path = PROFILE_DIR / "ARCHIVE.md"
     library_path = PROFILE_DIR / "LIBRARY.md"
 
     pending_content = pending_path.read_text() if pending_path.exists() else ""
@@ -343,10 +343,10 @@ def render_html(data: DashboardData) -> str:
     css = """
     :root { --bg: #1a1917; --surface: #252422; --text: #e8e6e3; --muted: #9c9a96; --accent: #88b4d4; --success: #6bcf7f; --warn: #e0b858; }
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; padding: 0.5rem; }
-    .dash { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; gap: 0.4rem; height: 100vh; max-height: 100vh; }
-    .header { grid-column: 1/-1; display: flex; align-items: center; gap: 1rem; }
+    html, body { margin: 0; padding: 0; min-height: 100%; height: 100%; overflow: hidden; }
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; padding: 0.5rem; padding-left: max(0.5rem, env(safe-area-inset-left)); padding-right: max(0.5rem, env(safe-area-inset-right)); padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+    .dash { display: flex; flex-direction: column; gap: 0.4rem; height: 100vh; max-height: 100vh; min-height: 0; }
+    .header { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
     h1 { font-size: 1.25rem; margin: 0; }
     .meta { color: var(--muted); font-size: 0.9rem; }
     h2 { font-size: 0.9rem; color: var(--accent); margin: 0 0 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
@@ -359,7 +359,7 @@ def render_html(data: DashboardData) -> str:
     .badge.pending { background: var(--warn); color: var(--bg); }
     .badge.ok { background: var(--success); color: var(--bg); }
     .candidate { padding: 0.25rem 0; font-size: 0.95rem; }
-    .exchange { padding: 0.3rem 0; font-size: 0.95rem; border-bottom: 1px solid var(--bg); }
+    .exchange { padding: 0.3rem 0; font-size: 0.9rem; border-bottom: 1px solid var(--bg); word-wrap: break-word; overflow-wrap: break-word; }
     .exchange:last-child { border-bottom: none; }
     .exchange-ts { font-size: 0.8rem; color: var(--muted); }
     .exchange .user { color: var(--muted); }
@@ -372,22 +372,35 @@ def render_html(data: DashboardData) -> str:
     .skill { flex: 1 1 160px; min-width: 0; background: var(--bg); padding: 0.45rem; border-radius: 6px; font-size: 0.95rem; }
     .skill .name { font-weight: 600; color: var(--accent); }
     .skill .edge { color: var(--muted); font-size: 0.85rem; }
-    .tabs { display: flex; gap: 0.3rem; margin-bottom: 0.3rem; flex-shrink: 0; }
-    .tab { padding: 0.35rem 0.65rem; font-size: 0.9rem; background: var(--bg); border-radius: 6px; cursor: pointer; color: var(--muted); border: 1px solid transparent; }
+    .tabs { display: flex; gap: 0.3rem; margin-bottom: 0.3rem; flex-shrink: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; padding-bottom: 2px; }
+    .tab { padding: 0.35rem 0.65rem; font-size: 0.85rem; background: var(--bg); border-radius: 6px; cursor: pointer; color: var(--muted); border: 1px solid transparent; white-space: nowrap; flex-shrink: 0; }
     .tab:hover { color: var(--text); }
     .tab.active { color: var(--accent); background: var(--surface); border-color: var(--accent); cursor: default; }
     .tab-content { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
     .tab-panel { display: none; flex: 1; min-height: 0; flex-direction: column; overflow: hidden; }
     .tab-panel.active { display: flex; }
-    .tab-panel ul { margin: 0; padding-left: 1.2rem; overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; font-size: 0.95rem; }
-    .tab-panel li { margin-bottom: 0.1rem; }
+    .tab-panel ul { margin: 0; padding-left: 1.2rem; overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; font-size: 0.9rem; }
+    .tab-panel li { margin-bottom: 0.3rem; word-wrap: break-word; overflow-wrap: break-word; }
     .tab-panel.skills-panel { display: none; flex-direction: column; overflow: hidden; }
     .tab-panel.skills-panel.active { display: flex; }
-    .tab-panel .skills-row { flex-wrap: wrap; gap: 0.5rem; overflow-y: auto; }
+    .tab-panel .skills-row { flex-wrap: wrap; gap: 0.5rem; overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; }
     .panel-scroll { overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
-    .row-main { grid-column: 1/-1; display: grid; grid-template-columns: 2fr 1fr; gap: 0.4rem; min-height: 0; }
-    .col-left { display: grid; grid-template-rows: 1fr auto; gap: 0.4rem; min-height: 0; }
-    .col-right { display: flex; flex-direction: column; gap: 0.4rem; min-height: 0; }
+    .row-main { display: grid; grid-template-columns: 2fr 1fr; gap: 0.4rem; min-height: 0; flex: 1; overflow: hidden; }
+    .col-left { display: flex; flex-direction: column; gap: 0.4rem; min-height: 0; overflow: hidden; }
+    .col-right { display: flex; flex-direction: column; gap: 0.4rem; min-height: 0; overflow: hidden; }
+    @media (max-width: 600px) {{
+      body {{ font-size: 13px; padding: 0.4rem; }}
+      .row-main {{ grid-template-columns: 1fr; grid-template-rows: 1fr auto; }}
+      .col-left {{ min-height: 200px; }}
+      .col-right {{ min-height: 0; }}
+      .header {{ flex-wrap: wrap; gap: 0.3rem; }}
+      .meta {{ font-size: 0.8rem; }}
+      h2 {{ font-size: 0.85rem; }}
+      section {{ padding: 0.5rem 0.6rem; }}
+      .tab {{ font-size: 0.8rem; padding: 0.3rem 0.5rem; }}
+      .stat .value {{ font-size: 1rem; }}
+      .grid {{ grid-template-columns: repeat(3, 1fr); }}
+    }}
     """
 
     skills_html = "".join(

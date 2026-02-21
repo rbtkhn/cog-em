@@ -138,8 +138,8 @@ grace-mar/
         ├── PENDING-REVIEW.md   # Pipeline staging
         ├── PIPELINE-EVENTS.jsonl  # Append-only pipeline audit log
         ├── COMPUTE-LEDGER.jsonl   # Token usage (energy ledger)
-        ├── TELEGRAM-ARCHIVE.md       # Bot conversation archive
-│   └── archives/             # Rotated chunks (TELEGRAM-ARCHIVE-YYYY-MM.md)
+        ├── ARCHIVE.md                # Conversation archive (Telegram, Mini App)
+│   └── archives/             # Rotated chunks (ARCHIVE-YYYY-MM.md)
         └── artifacts/          # Raw files (writing, artwork)
 ```
 

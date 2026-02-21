@@ -1,0 +1,36 @@
+# Render Blueprint: Grace-Mar Mini App + Telegram Bot
+# See docs/MINIAPP-SETUP.md for env var setup.
+#
+# If you already have the Mini App service, create the bot manually:
+#   New → Background Worker → connect repo → use build/start from grace-mar-bot below.
+
+services:
+  - type: web
+    name: grace-mar-miniapp
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python miniapp_server.py
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: GRACE_MAR_REPO
+        value: rbtkhn/grace-mar
+
+  - type: worker
+    name: grace-mar-bot
+    runtime: python
+    buildCommand: pip install -r bot/requirements.txt
+    startCommand: python bot/bot.py
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DASHBOARD_MINIAPP_URL
+        sync: false  # Set to your Mini App URL, e.g. https://grace-mar-miniapp.onrender.com
+      - key: GITHUB_TOKEN
+        sync: false  # For archiving to ARCHIVE.md
+      - key: GRACE_MAR_REPO
+        value: rbtkhn/grace-mar

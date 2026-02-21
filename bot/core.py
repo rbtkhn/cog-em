@@ -7,15 +7,18 @@ pass a channel_key (e.g. "telegram:123" or "wechat:oABC123") to scope
 conversations and rate limits.
 """
 
+import base64
 import json
+import logging
 import os
 import re
-import logging
 import threading
 import time
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -46,7 +49,10 @@ OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 MAX_HISTORY = 20
 
 PROFILE_DIR = Path(__file__).resolve().parent.parent / "users" / "pilot-001"
-ARCHIVE_PATH = PROFILE_DIR / "TELEGRAM-ARCHIVE.md"
+ARCHIVE_PATH = PROFILE_DIR / "ARCHIVE.md"
+ARCHIVE_REPO_PATH = "users/pilot-001/ARCHIVE.md"  # repo-relative for GitHub API
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "").strip()
+GRACE_MAR_REPO = os.getenv("GRACE_MAR_REPO", "rbtkhn/grace-mar").strip()
 PENDING_REVIEW_PATH = PROFILE_DIR / "PENDING-REVIEW.md"
 LIBRARY_PATH = PROFILE_DIR / "LIBRARY.md"
 COMPUTE_LEDGER_PATH = PROFILE_DIR / "COMPUTE-LEDGER.jsonl"
@@ -131,14 +137,67 @@ def _check_rate_limit(channel_key: str, bucket: str, tokens: int = 1) -> bool:
     return True
 
 
-def archive(event: str, channel_key: str, text: str) -> None:
-    """Append an event to the conversation archive."""
+def _format_archive_block(event: str, channel_key: str, text: str) -> str:
     ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(ARCHIVE_PATH, "a") as f:
-        f.write(f"**[{ts}]** `{event}` ({channel_key})\n")
-        for line in text.strip().splitlines():
-            f.write(f"> {line}\n")
-        f.write("\n")
+    lines = [f"**[{ts}]** `{event}` ({channel_key})\n"]
+    for line in (text or "").strip().splitlines():
+        lines.append(f"> {line}\n")
+    lines.append("\n")
+    return "".join(lines)
+
+
+def _append_via_github_api(block: str) -> None:
+    if not GITHUB_TOKEN or not GRACE_MAR_REPO:
+        return
+    try:
+        owner, repo = GRACE_MAR_REPO.split("/", 1)
+        url = f"https://api.github.com/repos/{owner}/{repo}/contents/{ARCHIVE_REPO_PATH}"
+        req = Request(
+            url,
+            headers={"Authorization": f"Bearer {GITHUB_TOKEN}", "Accept": "application/vnd.github+json"},
+        )
+        try:
+            with urlopen(req) as r:
+                data = json.loads(r.read())
+                content_b64 = data.get("content", "").replace("\n", "")
+                sha = data.get("sha", "")
+            content = base64.b64decode(content_b64).decode("utf-8")
+        except HTTPError as e:
+            if e.code != 404:
+                raise
+            content = ""
+            sha = ""
+        header = "# CONVERSATION ARCHIVE\n\n> Append-only log of all Grace-Mar interactions (Telegram, WeChat, Mini App). One mind, multiple channels.\n\n---\n\n"
+        base = content if content else header
+        new_content = base.rstrip() + "\n\n" + block.strip() + "\n"
+        payload = {"message": "bot: archive exchange", "content": base64.b64encode(new_content.encode()).decode()}
+        if sha:
+            payload["sha"] = sha
+        put_req = Request(url, data=json.dumps(payload).encode(), method="PUT")
+        put_req.add_header("Authorization", f"Bearer {GITHUB_TOKEN}")
+        put_req.add_header("Accept", "application/vnd.github+json")
+        put_req.add_header("Content-Type", "application/json")
+        urlopen(put_req)
+    except HTTPError as e:
+        logger.warning("Archive GitHub API error: %s %s", e.code, e.reason)
+    except Exception as e:
+        logger.warning("Archive error: %s", e)
+
+
+def archive(event: str, channel_key: str, text: str) -> None:
+    """Append an event to the conversation archive. Uses GitHub API when GITHUB_TOKEN set (Render), else local file."""
+    block = _format_archive_block(event, channel_key, text)
+    if GITHUB_TOKEN and GRACE_MAR_REPO:
+        def _run():
+            _append_via_github_api(block)
+        threading.Thread(target=_run, daemon=True).start()
+    else:
+        try:
+            ARCHIVE_PATH.parent.mkdir(parents=True, exist_ok=True)
+            with open(ARCHIVE_PATH, "a", encoding="utf-8") as f:
+                f.write(block)
+        except Exception as e:
+            logger.warning("Archive local write error: %s", e)
 
 
 def _load_library() -> list[dict]:

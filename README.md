@@ -99,7 +99,7 @@ grace-mar/
         ├── EVIDENCE.md              # Activity log
         ├── SESSION-LOG.md           # Interaction history
         ├── PENDING-REVIEW.md        # Pipeline staging
-        ├── TELEGRAM-ARCHIVE.md      # Bot conversation archive
+        ├── ARCHIVE.md               # Conversation archive (Telegram, Mini App)
         ├── artifacts/               # Raw files (writing, artwork)
         ├── SEED-PHASE-2-SURVEY.md   # Seed phase 2 survey data
         ├── SEED-PHASE-3-SURVEY.md   # Seed phase 3 survey data
@@ -129,14 +129,14 @@ The dashboard is **browser-only** (e.g. deployed to GitHub Pages). A separate **
 
 ## Archive Rotation
 
-When `TELEGRAM-ARCHIVE.md` exceeds ~1 MB or 2,500 entries, rotate oldest content to dated files:
+When `ARCHIVE.md` exceeds ~1 MB or 2,500 entries, rotate oldest content to dated files:
 
 ```bash
 python scripts/rotate_telegram_archive.py          # Dry run (report only)
 python scripts/rotate_telegram_archive.py --apply  # Perform rotation
 ```
 
-Rotated content goes to `users/pilot-001/archives/TELEGRAM-ARCHIVE-YYYY-MM.md`. The main archive keeps the last 2,000 entries.
+Rotated content goes to `users/pilot-001/archives/ARCHIVE-YYYY-MM.md`. The main archive keeps the last 2,000 entries.
 
 ## Fork attestation and export
 

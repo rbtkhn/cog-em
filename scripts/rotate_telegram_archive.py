@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Rotate TELEGRAM-ARCHIVE.md when it exceeds size or entry count.
+Rotate ARCHIVE.md when it exceeds size or entry count.
 
-Moves oldest entries to users/pilot-001/archives/TELEGRAM-ARCHIVE-YYYY-MM.md.
+Moves oldest entries to users/pilot-001/archives/ARCHIVE-YYYY-MM.md.
 Keeps the last KEEP_RECENT entries in the main file. Run manually or via cron.
 
 Thresholds:
@@ -20,7 +20,7 @@ import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-ARCHIVE_PATH = REPO_ROOT / "users" / "pilot-001" / "TELEGRAM-ARCHIVE.md"
+ARCHIVE_PATH = REPO_ROOT / "users" / "pilot-001" / "ARCHIVE.md"
 ARCHIVES_DIR = REPO_ROOT / "users" / "pilot-001" / "archives"
 
 MAX_BYTES = 1_000_000
@@ -47,7 +47,7 @@ def get_entry_ym(block: str) -> str | None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Rotate Telegram archive when too large")
+    parser = argparse.ArgumentParser(description="Rotate conversation archive when too large")
     parser.add_argument("--apply", "-a", action="store_true", help="Perform rotation (default: dry run)")
     args = parser.parse_args()
 
@@ -80,8 +80,8 @@ def main() -> None:
             ym = get_entry_ym(b) or "unknown"
             by_month.setdefault(ym, []).append(b)
         for ym, entries in by_month.items():
-            dest = ARCHIVES_DIR / f"TELEGRAM-ARCHIVE-{ym}.md"
-            header_ym = f"# TELEGRAM ARCHIVE — {ym}\n\n> Rotated from main archive. Append-only.\n\n---\n\n"
+            dest = ARCHIVES_DIR / f"ARCHIVE-{ym}.md"
+            header_ym = f"# CONVERSATION ARCHIVE — {ym}\n\n> Rotated from main archive. Append-only.\n\n---\n\n"
             if dest.exists():
                 existing = dest.read_text()
                 if not existing.rstrip().endswith("\n\n"):

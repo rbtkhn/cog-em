@@ -10,11 +10,19 @@ Usage:
     OPENAI_API_KEY=... python miniapp_server.py
 
 Set PORT (default 5000) for hosting. Enable CORS if Mini App is on a different origin.
+Set GITHUB_TOKEN and GRACE_MAR_REPO (e.g. rbtkhn/grace-mar) to archive to ARCHIVE.md.
 """
 
+import base64
+import json
+import logging
 import os
 import sys
+import threading
+from datetime import datetime
 from pathlib import Path
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory
@@ -38,6 +46,92 @@ from bot.core import (
 app = Flask(__name__, static_folder="miniapp", static_url_path="")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "").strip()
+GRACE_MAR_REPO = os.getenv("GRACE_MAR_REPO", "rbtkhn/grace-mar").strip()
+ARCHIVE_PATH = "users/pilot-001/ARCHIVE.md"
+logger = logging.getLogger(__name__)
+
+
+def _format_archive_block(event: str, text: str) -> str:
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    lines = [f"**[{ts}]** `{event}` (miniapp)\n"]
+    for line in (text or "").strip().splitlines():
+        lines.append(f"> {line}\n")
+    lines.append("\n")
+    return "".join(lines)
+
+
+def _append_to_github_archive(blocks: str) -> None:
+    if GITHUB_TOKEN and GRACE_MAR_REPO:
+        _append_via_github_api(blocks)
+    else:
+        _append_to_local_file(blocks)
+
+
+def _append_to_local_file(blocks: str) -> None:
+    """Fallback for local dev when GITHUB_TOKEN is not set."""
+    try:
+        path = REPO_ROOT / ARCHIVE_PATH
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if not path.exists():
+            path.write_text(
+                "# CONVERSATION ARCHIVE\n\n> Append-only log (Telegram, WeChat, Mini App). Local dev.\n\n---\n\n",
+                encoding="utf-8",
+            )
+        with path.open("a", encoding="utf-8") as f:
+            f.write(blocks.strip() + "\n")
+    except Exception as e:
+        logger.warning("Archive local file error: %s", e)
+
+
+def _append_via_github_api(blocks: str) -> None:
+    try:
+        owner, repo = GRACE_MAR_REPO.split("/", 1)
+        url = f"https://api.github.com/repos/{owner}/{repo}/contents/{ARCHIVE_PATH}"
+        req = Request(
+            url,
+            headers={"Authorization": f"Bearer {GITHUB_TOKEN}", "Accept": "application/vnd.github+json"},
+        )
+        try:
+            with urlopen(req) as r:
+                data = json.loads(r.read())
+                content_b64 = data.get("content", "").replace("\n", "")
+                sha = data.get("sha", "")
+            content = base64.b64decode(content_b64).decode("utf-8")
+        except HTTPError as e:
+            if e.code != 404:
+                raise
+            content = ""
+            sha = ""
+        header = "# CONVERSATION ARCHIVE\n\n> Append-only log of all Grace-Mar interactions (Telegram, WeChat, Mini App). One mind, multiple channels.\n\n---\n\n"
+        base = content if content else header
+        new_content = base.rstrip() + "\n\n" + blocks.strip() + "\n"
+        payload = {"message": "miniapp: archive exchange", "content": base64.b64encode(new_content.encode()).decode()}
+        if sha:
+            payload["sha"] = sha
+        put_data = json.dumps(payload).encode()
+        put_req = Request(url, data=put_data, method="PUT")
+        put_req.add_header("Authorization", f"Bearer {GITHUB_TOKEN}")
+        put_req.add_header("Accept", "application/vnd.github+json")
+        put_req.add_header("Content-Type", "application/json")
+        urlopen(put_req)
+    except HTTPError as e:
+        logger.warning("Archive GitHub API error: %s %s", e.code, e.reason)
+    except Exception as e:
+        logger.warning("Archive GitHub API error: %s", e)
+
+
+def _archive_miniapp(user_message: str, reply: str, is_lookup: bool = False, lookup_question: str | None = None) -> None:
+    """Append exchange to ARCHIVE.md (same file as bot). Runs in background."""
+    blocks = _format_archive_block("USER", user_message)
+    if is_lookup and lookup_question:
+        blocks += _format_archive_block("LOOKUP REQUEST", lookup_question)
+    blocks += _format_archive_block("GRACE-MAR (lookup)" if is_lookup else "GRACE-MAR", reply)
+
+    def _run():
+        _append_to_github_archive(blocks)
+
+    threading.Thread(target=_run, daemon=True).start()
 
 
 def _is_affirmative(text: str) -> bool:
@@ -99,6 +193,7 @@ def ask():
         question = _should_run_lookup(message, history)
         if question:
             reply = run_lookup(question, channel_key="miniapp")
+            _archive_miniapp(message, reply, is_lookup=True, lookup_question=question)
             return jsonify({"response": reply})
 
         # Normal flow: SYSTEM_PROMPT + history + new message
@@ -118,6 +213,7 @@ def ask():
             temperature=0.9,
         )
         reply = response.choices[0].message.content.strip()
+        _archive_miniapp(message, reply, is_lookup=False)
         return jsonify({"response": reply})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

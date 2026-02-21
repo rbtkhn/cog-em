@@ -56,26 +56,48 @@ ngrok http 5000
 
 **Render**
 
-1. New Web Service, connect repo.
-2. Build: `pip install -r requirements.txt`
-3. Start: `python miniapp_server.py`
-4. Set `OPENAI_API_KEY`. Use the service URL.
+- **Option A — Blueprint:** Add `render.yaml` to your repo. In Render Dashboard → New → Blueprint, connect the repo. Both the Mini App (web) and the bot (worker) will be created. Set env vars in each service’s Environment tab.
+- **Option B — Manual:** New Web Service, connect repo. Build: `pip install -r requirements.txt`. Start: `python miniapp_server.py`. Set `OPENAI_API_KEY`, and optionally `GITHUB_TOKEN`, `GRACE_MAR_REPO`.
 
-## 3. Configure the bot (.env)
+### Archive (optional)
+
+Mini App exchanges are archived to `users/pilot-001/ARCHIVE.md`, the same file as Telegram and WeChat (one mind, multiple channels). Render’s filesystem is ephemeral, so the server uses the GitHub API to append to the repo.
+
+Set these env vars on Render (or in `.env` locally):
+
+- `GITHUB_TOKEN` — A fine-grained or classic PAT with `contents: write` on the repo
+- `GRACE_MAR_REPO` — Repo in `owner/repo` form (default: `rbtkhn/grace-mar`)
+
+Without them, local dev writes to `users/pilot-001/ARCHIVE.md` on disk; on Render, exchanges are not archived.
+
+## 3. Bot 24/7
+
+The `render.yaml` blueprint defines a **Background Worker** (`grace-mar-bot`) that runs the Telegram bot. With the blueprint deployed, the bot runs 24/7. Set these env vars on the bot service:
+
+- `TELEGRAM_BOT_TOKEN` — from @BotFather
+- `OPENAI_API_KEY`
+- `DASHBOARD_MINIAPP_URL` — your Mini App URL (e.g. `https://grace-mar.onrender.com`)
+- `GITHUB_TOKEN` — PAT with `contents: write` (for archiving to ARCHIVE.md; without it, exchanges are not saved when running on Render)
+
+If you deployed the Mini App manually (without the blueprint), add the bot separately: New → Background Worker, connect repo, build: `pip install -r bot/requirements.txt`, start: `python bot/bot.py`.
+
+## 4. Bot env (local)
+
+When running the bot locally, set in `bot/.env`:
 
 ```env
-DASHBOARD_MINIAPP_URL=https://grace-mar-qa.railway.app
+DASHBOARD_MINIAPP_URL=https://grace-mar-miniapp.onrender.com
 ```
 
-This URL must serve the Q&A Mini App (HTML at `/`, API at `/api/ask`). When set, the bot exposes `/dashboard` and the menu button, both opening this Q&A app.
+This URL must serve the Q&A Mini App. When set, the bot exposes `/dashboard` and the menu button. On Render, set the same var in the bot service’s Environment tab.
 
-## 4. @BotFather (optional)
+## 5. @BotFather (optional)
 
 In @BotFather → Bot Settings → Menu Button:
 
 - Set URL to your Q&A Mini App URL (same as `DASHBOARD_MINIAPP_URL`).
 
-## 5. Deep linking
+## 6. Deep linking
 
 Use `startapp` to open the Q&A app:
 
