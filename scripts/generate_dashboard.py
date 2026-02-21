@@ -432,7 +432,7 @@ def render_html(data: DashboardData) -> str:
             <div class="col-right">
                 <section style="flex:1; min-height:0; overflow:hidden; display:flex; flex-direction:column;">
                     <h2>Recent exchanges</h2>
-                    <div class="panel-scroll" style="flex:1;">{exchanges_html or "<p class=\"meta\">—</p>"}</div>
+                    <div class="panel-scroll" style="flex:1;">{exchanges_html or '<p class="meta">—</p>'}</div>
                 </section>
                 <section>
                     <h2>Benchmarks</h2>
