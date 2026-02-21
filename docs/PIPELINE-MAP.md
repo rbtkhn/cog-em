@@ -179,7 +179,17 @@ When candidates are **approved**, update **all** of:
 | **READ has no bot feed** | Bot conversations mention books, but READ pillar (comprehension, vocabulary) has no automated input. Reading List is empty. | Add analyst signal for "book discussed" → stage candidate that could create READ-* or link to interest. Or: operator workflow for "we finished [book]." |
 | **WRITE / IMAGINE fully manual** | No automation for artifact capture. User must photograph, save, and write EVIDENCE entry. | Optional: upload flow (e.g. Telegram photo → staging for EVIDENCE), or template script for new WRITE/IMAGINE entries. |
 | **Edge → quest feedback** | Container edge (SKILLS) could drive "propose activity" but there is no automated quest generator. | Future: script that reads SKILLS, infers edge, outputs suggested activities. |
-| **No pipeline event log** | Staging and approval are implicit in file edits. No append-only event log for audit. | Future: emit events (detected, approved, applied) for determinism (see approved improvement #2 from feedback). |
+| ~~No pipeline event log~~ | ~~Staging and approval implicit in file edits~~ | ✅ Implemented: `PIPELINE-EVENTS.jsonl` — bot emits `staged`; operator runs `emit_pipeline_event.py applied CANDIDATE-XX` when processing. |
+
+---
+
+## Counterfactual Pack (Emulation Harness)
+
+`scripts/run_counterfactual_harness.py` runs adversarial probes against the emulation. Probes stress the knowledge boundary, LLM-leak resistance, and in-scope behavior. Run before prompt changes to detect regressions.
+
+```bash
+python scripts/run_counterfactual_harness.py
+```
 
 ---
 

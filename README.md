@@ -6,7 +6,7 @@
 
 The cognitive fork exists inside the user's mind — their mental model of an individual, made explicit and structured. It captures who the person is (identity, personality, voice) and what they can do (skills, knowledge, creative capability). Over time, the fork becomes a living cognitive record that can be queried, emulated, and preserved.
 
-The fork grows only through what the user explicitly provides. An optional emulation layer (currently a Telegram bot) acts as an observation window — a channel through which the user selectively exposes thoughts and information to the fork's awareness.
+The fork grows only through what the user explicitly provides. An optional emulation layer (Telegram and/or WeChat bots) acts as an observation window — a channel through which the user selectively exposes thoughts and information to the fork's awareness.
 
 ## Architecture
 
@@ -37,7 +37,7 @@ All profile changes pass through a user-controlled gate:
 4. **Integration** — approved changes committed across profile, evidence, prompt, and session log
 
 Two input channels feed the pipeline:
-- **Bot (automated)** — Telegram conversations analyzed by an LLM analyst
+- **Bot (automated)** — Telegram and/or WeChat conversations analyzed by an LLM analyst
 - **Operator (manual)** — real-world observations (school work, art, conversations) brought directly by the user
 
 ## Status
@@ -45,7 +45,7 @@ Two input channels feed the pipeline:
 **Phase:** Pilot (post-seed, active pipeline)
 **Pilot user:** pilot-001 (fork name: Grace-Mar)
 **Seeding:** Complete (6 phases — identity, personality, academics, creativity, writing voice, core personality)
-**Emulation:** Active via Telegram bot
+**Emulation:** Active via Telegram bot; WeChat optional (see `bot/WECHAT-SETUP.md`)
 **Pipeline:** Active — knowledge, curiosity, and personality channels populated
 
 ## Repository Structure
@@ -74,10 +74,16 @@ grace-mar/
 │   ├── CONTRADICTION-RESOLUTION.md  # Conflict resolution format (spec)
 │   └── LETTER-TO-STUDENT.md         # Letter to first pilot student
 ├── scripts/
+│   ├── generate_dashboard.py        # Dashboard generator
 │   └── validate-integrity.py        # Integrity validator
+├── dashboard/
+│   └── index.html                   # Fork dashboard (run generate_dashboard.py to refresh)
 ├── bot/
-│   ├── bot.py                       # Telegram bot — emulation layer
+│   ├── core.py                      # Shared emulation logic (Telegram + WeChat)
+│   ├── bot.py                       # Telegram bot
+│   ├── wechat_bot.py                # WeChat Official Account bot (webhook server)
 │   ├── prompt.py                    # LLM prompts (SYSTEM, ANALYST, LOOKUP, REPHRASE)
+│   └── WECHAT-SETUP.md              # WeChat integration setup guide
 │   └── requirements.txt             # Python dependencies
 └── users/
     └── pilot-001/                   # First pilot user
@@ -102,6 +108,15 @@ grace-mar/
 | [AGENTS.md](AGENTS.md) | Guardrails for AI coding assistants |
 | [Concept](docs/CONCEPT.md) | Full concept explanation |
 | [Pilot Plan](docs/PILOT-PLAN.md) | Two-month pilot structure |
+
+## Dashboard
+
+Generate an HTML dashboard for the pilot fork (summary, pipeline queue, SKILLS, recent exchanges, benchmarks):
+
+```bash
+python scripts/generate_dashboard.py
+open dashboard/index.html
+```
 
 ## Validation
 

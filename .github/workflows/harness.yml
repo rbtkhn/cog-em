@@ -1,0 +1,24 @@
+# Run Counterfactual Pack harness on push/PR.
+# Requires OPENAI_API_KEY repository secret.
+name: Counterfactual Pack
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  harness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install openai python-dotenv
+      - name: Run harness
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/run_counterfactual_harness.py

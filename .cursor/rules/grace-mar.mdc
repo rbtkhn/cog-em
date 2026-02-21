@@ -16,7 +16,7 @@ Governed by [GRACE-MAR-CORE v2.0](docs/GRACE-MAR-CORE.md). See [ARCHITECTURE](do
 
 ## The Observation Window Model
 
-The fork lives inside the user's mind — it is their mental model of the self, made explicit and structured. The emulation layer (Telegram bot at `bot/bot.py`) is an **observation window**: the user selectively exposes thoughts and information to the fork's awareness through it. The bot is not where the fork lives.
+The fork lives inside the user's mind — it is their mental model of the self, made explicit and structured. The emulation layer (Telegram at `bot/bot.py`, WeChat at `bot/wechat_bot.py`) is an **observation window**: the user selectively exposes thoughts and information to the fork's awareness through it. The bot is not where the fork lives.
 
 The fork can only reference what has been explicitly added to its profile. **LLM world knowledge must never leak through the emulation.**
 
@@ -26,7 +26,7 @@ The fork can only reference what has been explicitly added to its profile. **LLM
 
 Both channels feed the same gated pipeline and the same profile.
 
-**Channel 1 — Bot (Automated):** Telegram bot conversations are analyzed by an LLM analyst (`ANALYST_PROMPT` in `bot/prompt.py`). The analyst stages candidates in `PENDING-REVIEW.md` automatically.
+**Channel 1 — Bot (Automated):** Telegram and WeChat bot conversations are analyzed by an LLM analyst (`ANALYST_PROMPT` in `bot/prompt.py`). The analyst stages candidates in `PENDING-REVIEW.md` automatically.
 
 **Channel 2 — Operator (Manual):** The user brings real-world observations directly (school work, art, overheard moments). Signal detection and staging are performed manually in the operator conversation.
 
@@ -166,7 +166,9 @@ users/[user-id]/
 
 ```
 bot/
-├── bot.py            # Telegram bot — emulation layer
+├── core.py           # Shared emulation logic (Telegram + WeChat)
+├── bot.py            # Telegram bot
+├── wechat_bot.py     # WeChat Official Account bot
 ├── prompt.py         # All LLM prompts (SYSTEM, ANALYST, LOOKUP, REPHRASE)
 └── requirements.txt  # Python dependencies
 ```

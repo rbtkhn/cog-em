@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Grace-Mar — Grace-Mar</title>
+    <style>
+    :root { --bg: #0f1419; --surface: #1a2332; --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --success: #3fb950; --warn: #d29922; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+    body { font-family: 'SF Mono', 'Consolas', monospace; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.4; padding: 0.5rem; }
+    .dash { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; gap: 0.4rem; height: 100vh; max-height: 100vh; }
+    .header { grid-column: 1/-1; display: flex; align-items: center; gap: 1rem; }
+    h1 { font-size: 1.25rem; margin: 0; }
+    .meta { color: var(--muted); font-size: 0.9rem; }
+    h2 { font-size: 0.9rem; color: var(--accent); margin: 0 0 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    section { background: var(--surface); border-radius: 4px; padding: 0.5rem 0.6rem; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.3rem; }
+    .stat { background: var(--bg); padding: 0.3rem 0.4rem; border-radius: 2px; }
+    .stat .label { font-size: 0.8rem; color: var(--muted); }
+    .stat .value { font-size: 1.1rem; font-weight: 600; }
+    .badge { display: inline-block; padding: 0.1rem 0.35rem; border-radius: 2px; font-size: 0.8rem; }
+    .badge.pending { background: var(--warn); color: var(--bg); }
+    .badge.ok { background: var(--success); color: var(--bg); }
+    .candidate { padding: 0.25rem 0; font-size: 0.95rem; }
+    .exchange { padding: 0.3rem 0; font-size: 0.95rem; border-bottom: 1px solid var(--bg); }
+    .exchange:last-child { border-bottom: none; }
+    .exchange-ts { font-size: 0.8rem; color: var(--muted); }
+    .exchange .user { color: var(--muted); }
+    .exchange .gm { color: var(--accent); }
+    .skills-wrap { overflow-y: auto; max-height: 5rem; -webkit-overflow-scrolling: touch; }
+    .skills-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .skill { flex: 1 1 160px; min-width: 0; background: var(--bg); padding: 0.4rem; border-radius: 2px; font-size: 0.95rem; }
+    .skill .name { font-weight: 600; color: var(--accent); }
+    .skill .edge { color: var(--muted); font-size: 0.85rem; }
+    .tabs { display: flex; gap: 0.3rem; margin-bottom: 0.3rem; flex-shrink: 0; }
+    .tab { padding: 0.3rem 0.6rem; font-size: 0.9rem; background: var(--bg); border-radius: 2px; cursor: pointer; color: var(--muted); border: 1px solid transparent; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); background: var(--surface); border-color: var(--accent); cursor: default; }
+    .tab-content { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+    .tab-panel { display: none; flex: 1; min-height: 0; flex-direction: column; overflow: hidden; }
+    .tab-panel.active { display: flex; }
+    .tab-panel ul { margin: 0; padding-left: 1.2rem; overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; font-size: 0.95rem; }
+    .tab-panel li { margin-bottom: 0.1rem; }
+    .tab-panel.skills-panel { display: none; flex-direction: column; overflow: hidden; }
+    .tab-panel.skills-panel.active { display: flex; }
+    .tab-panel .skills-row { flex-wrap: wrap; gap: 0.5rem; overflow-y: auto; }
+    .panel-scroll { overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+    .row-main { grid-column: 1/-1; display: grid; grid-template-columns: 2fr 1fr; gap: 0.4rem; min-height: 0; }
+    .col-left { display: grid; grid-template-rows: 1fr auto; gap: 0.4rem; min-height: 0; }
+    .col-right { display: flex; flex-direction: column; gap: 0.4rem; min-height: 0; }
+    </style>
+</head>
+<body>
+    <div class="dash">
+        <div class="header">
+            <h1>Grace-Mar</h1>
+            <span class="meta">2026-02-20 16:12:53 · pilot-001</span>
+            <div class="grid" style="flex:1; max-width:360px; margin-left:auto;">
+                <div class="stat"><div class="label">Age</div><div class="value">6</div></div>
+                <div class="stat"><div class="label">Lexile</div><div class="value">600L</div></div>
+                <div class="stat"><div class="label">IX-A</div><div class="value">24</div></div>
+                <div class="stat"><div class="label">IX-B</div><div class="value">3</div></div>
+                <div class="stat"><div class="label">IX-C</div><div class="value">1</div></div>
+                <div class="stat"><div class="label">Pipeline</div><div class="value"><span class="badge ok">Queue empty</span></div></div>
+            </div>
+        </div>
+        <div class="row-main">
+            <div class="col-left">
+                <section style="flex:1; min-height:0;">
+                    <h2>Profile</h2>
+                    <div class="tabs">
+                        <button class="tab active" data-tab="knowledge">Knowledge 24</button>
+                        <button class="tab" data-tab="skills">Skills</button>
+                        <button class="tab" data-tab="curiosity">Curiosity 3</button>
+                        <button class="tab" data-tab="personality">Personality 1</button>
+                        <button class="tab" data-tab="library">Library 24</button>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-panel active" id="panel-knowledge"><ul><li>George Washington — first president of the United States</li><li>Jupiter</li><li>Mars — the red planet with Olympus Mons</li><li>Gemstones — shiny, rare, colorful rocks used for jewelry</li><li>Gemstones vs normal stones — special minerals, cut and polished</li><li>Abraham Lincoln</li><li>Abraham Lincoln — 16th president, ended slavery, Emancipation Proclamation</li><li>The Nutcracker — ballet by Tchaikovsky about Clara</li><li>Schubert</li><li>The Wild Robot — book about a robot named Roz on a wild island</li><li>Reptiles — animals with scales, lay eggs, cold-blooded</li><li>No reptiles on Jupiter — made of gas, no solid ground</li><li>Mercury — smallest planet, closest to the sun</li><li>Venus — 2nd planet, hottest, covered in lava</li><li>Earth — our home, only planet with life</li><li>Mars — 4th planet, red from iron, 2 moons Phobos and Deimos</li><li>Jupiter — biggest planet, all others fit inside, 63+ moons</li><li>Saturn — 6th planet, rings of icy rocks, 53+ moons</li><li>Uranus — 7th planet, tipped on its side, coldest</li><li>Neptune — 8th planet, gas giant, wild winds</li><li>Pluto — dwarf planet, 3 small moons</li><li>Earth</li><li>Asteroid Belt — ring of rocks between Mars and Jupiter</li><li>Egyptian pharaoh portrait — King Tut</li></ul></div>
+                        <div class="tab-panel skills-panel" id="panel-skills"><div class="skills-row"><div class="skill"><span class="name">READ</span> ACTIVE<div class="edge">Longer independent text; early chapter books; inference questions; retelling wit</div></div><div class="skill"><span class="name">WRITE</span> ACTIVE<div class="edge">Capitals at sentence start (inconsistent); variety of connectors (then, so, but,</div></div><div class="skill"><span class="name">IMAGINE</span> ACTIVE<div class="edge">Narrative creation from prompts; cross-language creative tasks; independent scen</div></div></div></div>
+                        <div class="tab-panel" id="panel-curiosity"><ul><li>Classical music and ballet</li><li>Inner solar system / terrestrial bodies</li><li>Ancient Egypt — deepening engagement</li></ul></div>
+                        <div class="tab-panel" id="panel-personality"><ul><li>First documented use of paint as art medium. Full brush painting with thick coverage, bold primary colors (gold, blue, red). Previous documented media: crayon, marker, collage, crayon-on-black-paper. Shows confidence with new tools — filled the entire frame with no hesitation.</li></ul></div>
+                        <div class="tab-panel" id="panel-library"><ul><li>Usborne World Geography Encyclopedia (Internet Linked)</li><li>Usborne World History Encyclopedia: An Illustrated Introduction to World History for Kids, full of Maps, Time Charts and over 800 Links for Homework Help</li><li>Usborne Science Encyclopedia: An In-depth Guide for Young Scientists Exploring Gravity, Flight, Genes, DNA and More, with Over 180 Video Clips and 1000 Recommended Websites for Further Learning</li><li>Usborne Complete Greek Myths: An Illustrated Collection of Ancient Greek Mythology Featuring Maps and a Glossary</li><li>Usborne Illustrated Odyssey</li><li>Usborne Illustrated Stories from India</li><li>Usborne Illustrated Adventure Stories</li><li>Usborne Illustrated Bible Stories</li><li>Usborne Illustrated Stories from China</li><li>Usborne Illustrated Myths From Around The World</li><li>Usborne Illustrated Ballet Stories</li><li>Usborne Illustrated Classics: Secret Garden & Other Stories</li><li>Usborne Illustrated Stories from Aesop: A Beautifully Illustrated Collection of Timeless Fables</li><li>Usborne Illustrated Stories from the Greek Myths</li><li>Usborne Illustrated Norse Myths</li><li>Usborne Illustrated Hans Christian Andersen</li><li>Usborne Illustrated Tales of King Arthur</li><li>Usborne Illustrated Stories from Shakespeare</li><li>Usborne Illustrated Grimm</li><li>Usborne Complete Dickens</li><li>Usborne Illustrated Arabian Nights</li><li>Usborne Complete Shakespeare: Stories from All the Plays</li><li>Usborne Complete Jane Austen: All the Novels Retold</li><li>Encyclopædia Britannica (1911)</li></ul></div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-right">
+                <section style="flex:1; min-height:0; overflow:hidden; display:flex; flex-direction:column;">
+                    <h2>Recent exchanges</h2>
+                    <div class="panel-scroll" style="flex:1;"><div class="exchange"><div class="exchange-ts">2026-02-20 13:21:25</div><div class="user">USER: hi!</div><div class="gm">GRACE-MAR: Hi! How are you? 😊</div></div><div class="exchange"><div class="exchange-ts">2026-02-20 08:05:11</div><div class="user">USER: yes</div><div class="gm">GRACE-MAR: I looked it up! Jupiter is a big, big planet that's super far away, and it's made of gas, not ground like Earth. That means there's nowhere for lizards or snakes to walk around! Plus, it's really stormy and squishy, like when you try to hold a water balloon super tight. So, no reptiles can live there, 'cause they need a place to crawl and sunbathe! 🌪️🦎</div></div><div class="exchange"><div class="exchange-ts">2026-02-20 08:03:46</div><div class="user">USER: are there reptiles on jupiter</div><div class="gm">GRACE-MAR: Oh, that's a fun question! But nope, there aren't any reptiles on Jupiter, because Jupiter is a gas giant planet, and it's really, really big and doesn't have a solid surface like Earth. Plus, it's super stormy with the Great Red Spot, which is a giant storm! So I think reptiles might not like it there. I haven't learned that yet! do you want me to look it up?</div></div><div class="exchange"><div class="exchange-ts">2026-02-20 08:03:01</div><div class="user">USER: yes</div><div class="gm">GRACE-MAR: I looked it up! Reptiles are super cool animals that have these neat scales on their skin, kinda like how fish have them too! And guess what? They lay eggs, just like chickens! Some of them are snakes and lizards, which I see in my picture books, and they need to sit in the sun to stay warm because they’re cold-blooded. Isn't that funny? It's like they have to wear a sunshine jacket!</div></div><div class="exchange"><div class="exchange-ts">2026-02-20 08:01:11</div><div class="user">USER: I am curious about reptiles</div><div class="gm">GRACE-MAR: Reptiles are cool! They have scaly skin and some of them can live on land and water. I know snakes and turtles are reptiles. I like how turtles have a shell to protect them. I haven't learned that yet! do you want me to look it up?</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:21:47</div><div class="user">USER: Yes</div><div class="gm">GRACE-MAR: I found out about this cool book called "The Wild Robot"! It's about a robot named Roz who ends up on a wild island. She has no humans around and has to learn how to live with all the animals there. It's like magic because she makes friends with them and it's super exciting, kinda like when we watch shows with robots and animals on TV!</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:21:31</div><div class="user">USER: Let's watch the wild robot together</div><div class="gm">GRACE-MAR: I haven't heard of "The Wild Robot"! But robots sound cool because they can sometimes do things like people do, and I like stories with fun adventures. I like watching movies with robots too, like E.T. because he's a different kind of robot alien! What's "The Wild Robot" about? I haven't learned that yet! do you want me to look it up?</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:18:07</div><div class="user">USER: I like dancing to it</div><div class="gm">GRACE-MAR: That's cool! Dancing is so much fun because you can move your body and be free like flying! I like dancing to songs too, especially The Nutcracker because the dances are so pretty. What's your favorite part to dance to in Schubert's music?</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:17:17</div><div class="user">USER: Yes</div><div class="gm">GRACE-MAR: I looked it up! Schubert made this really neat piano song called Sonata D845. It's got four parts, like when we have four parts in our music class songs. It's super pretty because it has lots of feelings in it, like when a story makes you feel happy or sad. I think it would be fun to listen to because it sounds like it's a musical adventure! 🎶</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:17:05</div><div class="user">USER: Right now we're listening to Schubert piano sonata d845</div><div class="gm">GRACE-MAR: I haven't heard of Schubert piano sonata d845! I like music and I think pianos are cool because they have so many keys to play. Do you like it? I like listening to The Nutcracker music because it's so pretty and makes me want to dance. I haven't learned that yet! do you want me to look it up?</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:06:41</div><div class="user">USER: Yes</div><div class="gm">GRACE-MAR: I looked it up! The Nutcracker is like a super cool ballet show with music by a guy named Tchaikovsky. It's about a girl, Clara, who gets this awesome nutcracker toy that turns into a real guy, and then they go on a super fun adventure to a candy land! They do this around Christmas, and there are lots of pretty dances and music, like when we have music time at school but fancier! 🎄🍬</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:06:30</div><div class="user">USER: Do you know about the nutcracker ballet I really love that</div><div class="gm">GRACE-MAR: I haven't learned about the nutcracker ballet yet! But I love dancing and stories too. I like K-Pop Demon Hunters because the costumes are cool, and I think costumes in a ballet would be really pretty too! do you want me to look it up?</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:05:42</div><div class="user">USER: Yes</div><div class="gm">GRACE-MAR: I looked it up! Abraham Lincoln was super important because he was a big boss of America, like the 16th one! And you know what? He helped stop a thing called slavery, which is when people couldn't be free. He did this by writing something special called the Emancipation Proclamation. Plus, he helped keep the country from going all broken apart, kind of like when you fix a toy that's about to break! Isn't that cool?</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:05:33</div><div class="user">USER: Why was Lincoln a really important guy</div><div class="gm">GRACE-MAR: I haven't learned about Abraham Lincoln yet! But I know George Washington was important because he was the first president of the United States and people called him the "Father of His Country." do you want me to look it up?</div></div><div class="exchange"><div class="exchange-ts">2026-02-19 18:04:58</div><div class="user">USER: Yes</div><div class="gm">GRACE-MAR: I found out that Abraham Lincoln, who was a really important guy, wore a super tall black hat! It was called a stovepipe hat, like in a fairy tale. And you know what's funny? He put notes and papers inside his hat! It's like he had a secret hiding place on his head! That’s so cool 'cause I thought hats were just for keeping your head warm!</div></div></div>
+                </section>
+                <section>
+                    <h2>Benchmarks</h2>
+                    <div class="grid">
+                        <div class="stat"><div class="label">Lexile</div><div class="value">600L</div></div>
+                        <div class="stat"><div class="label">Backlog</div><div class="value">0</div></div>
+                        <div class="stat"><div class="label">IX total</div><div class="value">28</div></div>
+                        <div class="stat"><div class="label">Last pipeline activity</div><div class="value">2026-02-20</div></div>
+                        <div class="stat"><div class="label">Tokens today</div><div class="value">0</div></div>
+                        <div class="stat"><div class="label">Tokens total</div><div class="value">0</div></div>
+                        <div class="stat"><div class="label">Tokens/IX</div><div class="value">—</div></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <script>
+    document.querySelectorAll('.tab').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var tab = this.dataset.tab;
+            document.querySelectorAll('.tab').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+            this.classList.add('active');
+            var panel = document.getElementById('panel-' + tab);
+            if (panel) panel.classList.add('active');
+        });
+    });
+    </script>
+</body>
+</html>

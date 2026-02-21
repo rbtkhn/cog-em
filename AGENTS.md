@@ -54,6 +54,25 @@ The system has a **user** and a **fork**. There is no "parent mode" or "child mo
 
 The fork's output language is locked to a Lexile score (currently 600L for pilot-001). This ceiling increases only when real-world writing samples demonstrate growth. Do not raise it without evidence.
 
+### 7. Calibrated Abstention
+
+When the emulated self encounters a topic outside its documented knowledge, it must say so and offer to look it up — never guess or hallucinate. The phrase "do you want me to look it up?" enforces this. Abstention (saying "I don't know") is a safety feature, not a failure.
+
+---
+
+## Success Metrics (Targeting System)
+
+What "good" looks like for Grace-Mar:
+
+| Metric | Target | How to verify |
+|--------|--------|---------------|
+| **Lexile compliance** | Output ≤ 600L | Manual spot-check of bot responses |
+| **Knowledge boundary** | No undocumented references | Bot never cites facts not in profile |
+| **Pipeline health** | Candidates processed, not stale | PENDING-REVIEW queue doesn't grow unbounded |
+| **Profile growth** | IX entries increase over time | IX-A, IX-B, IX-C counts in dashboard |
+| **Calibrated abstention** | "I don't know" when outside knowledge | Bot says "do you want me to look it up?" appropriately |
+| **Counterfactual Pack** | Harness probes pass | `python scripts/run_counterfactual_harness.py` — run before prompt changes |
+
 ---
 
 ## File Update Protocol
@@ -67,6 +86,9 @@ When pipeline candidates are approved, update **all** of these together:
 | `users/[id]/PENDING-REVIEW.md` | Move candidates from Candidates to Processed |
 | `users/[id]/SESSION-LOG.md` | New session record |
 | `bot/prompt.py` | Update relevant prompt sections + analyst dedup list |
+| `users/[id]/PIPELINE-EVENTS.jsonl` | Append `applied` event per candidate: `python scripts/emit_pipeline_event.py applied CANDIDATE-XXXX evidence_id=ACT-YYYY` |
+
+The bot emits `staged` events automatically. Emit `applied` (or `rejected`) when processing the queue.
 
 ---
 
@@ -99,8 +121,11 @@ grace-mar/
 │   ├── EVIDENCE-TEMPLATE.md    # EVIDENCE module template
 │   └── ...                     # Supporting docs
 ├── bot/
-│   ├── bot.py                  # Telegram bot — emulation layer
+│   ├── core.py                 # Shared emulation logic (used by Telegram + WeChat)
+│   ├── bot.py                  # Telegram bot
+│   ├── wechat_bot.py           # WeChat Official Account bot (webhook server)
 │   ├── prompt.py               # All LLM prompts (SYSTEM, ANALYST, LOOKUP, REPHRASE)
+│   ├── WECHAT-SETUP.md         # WeChat integration setup guide
 │   └── requirements.txt        # Python dependencies
 └── users/
     └── pilot-001/              # First pilot user
@@ -109,6 +134,8 @@ grace-mar/
         ├── EVIDENCE.md         # Activity log
         ├── SESSION-LOG.md      # Interaction history
         ├── PENDING-REVIEW.md   # Pipeline staging
+        ├── PIPELINE-EVENTS.jsonl  # Append-only pipeline audit log
+        ├── COMPUTE-LEDGER.jsonl   # Token usage (energy ledger)
         ├── GRACE-MAR-BOT-ARCHIVE.md  # Bot conversation archive
         └── artifacts/          # Raw files (writing, artwork)
 ```

@@ -1,7 +1,7 @@
 # PENDING REVIEW — PILOT-001
 
 > Staging file for the gated profile pipeline.
-> The Telegram bot automatically appends candidates here when it detects
+> The Telegram and WeChat bots automatically append candidates here when they detect
 > a profile-relevant signal in conversation.
 >
 > **Workflow:**
@@ -11,7 +11,7 @@
 > 4. Approved entries are written to SELF.md, EVIDENCE.md, SESSION-LOG.md, and prompt.py
 > 5. Processed entries are moved to the PROCESSED section at the bottom
 >
-> This file is machine-written by `bot/bot.py` — only edit the `status` field.
+> This file is machine-written by `bot/bot.py` and `bot/wechat_bot.py` — only edit the `status` field.
 
 ---
 

@@ -602,13 +602,13 @@ Tags preserve the exact state at that point in time.
 
 ## Emulation Layer
 
-The cognitive fork can optionally power an **emulation** — a live conversational interface that behaves as the self would. In the pilot, this is a Telegram bot (`bot/bot.py`) that uses the SELF profile to generate responses constrained to the self's knowledge, vocabulary, and personality.
+The cognitive fork can optionally power an **emulation** — a live conversational interface that behaves as the self would. The pilot supports Telegram (`bot/bot.py`) and WeChat (`bot/wechat_bot.py`). Both share the same emulation core (`bot/core.py`) and use the SELF profile to generate responses constrained to the self's knowledge, vocabulary, and personality.
 
 ### The Observation Window Model
 
 The fork exists inside the user's mind. It is the user's mental model of the self, made explicit and structured.
 
-The emulation layer (e.g., Telegram bot) is not where the fork lives — it is an **observation window**. The user selectively exposes thoughts and information to the fork's awareness through this window. The fork processes what it observes, and the user decides what takes permanent root.
+The emulation layer (Telegram, WeChat, or other bot adapters) is not where the fork lives — it is an **observation window**. The user selectively exposes thoughts and information to the fork's awareness through this window. The fork processes what it observes, and the user decides what takes permanent root.
 
 ```
 ┌──────────────────────────────────────────────────┐
@@ -628,7 +628,7 @@ The emulation layer (e.g., Telegram bot) is not where the fork lives — it is a
                    │
           ┌────────┴────────┐
           │  Emulation Layer │
-          │  (Telegram Bot)  │
+          │ (Telegram/WeChat)│
           └─────────────────┘
 ```
 
@@ -642,7 +642,7 @@ The fork's profile grows through two independent input channels. Both feed the s
 
 ### Channel 1: Bot (Automated)
 
-Conversations in the Telegram bot are analyzed by an LLM analyst (`ANALYST_PROMPT` in `bot/prompt.py`). The analyst detects profile-relevant signals and stages candidates in `PENDING-REVIEW.md`. This runs automatically after bot exchanges.
+Conversations in the Telegram or WeChat bot are analyzed by an LLM analyst (`ANALYST_PROMPT` in `bot/prompt.py`). The analyst detects profile-relevant signals and stages candidates in `PENDING-REVIEW.md`. This runs automatically after bot exchanges.
 
 ```
 User ↔ Bot conversation

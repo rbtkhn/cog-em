@@ -1,0 +1,423 @@
+#!/usr/bin/env python3
+"""
+Generate the Grace-Mar pilot dashboard.
+
+Reads pilot-001 profile files and produces a single HTML dashboard with:
+- Fork summary (identity, Lexile, pipeline status)
+- PENDING-REVIEW queue (candidates awaiting approval)
+- SKILLS container status (READ, WRITE, IMAGINE)
+- Recent bot archive excerpts
+- Benchmarks (pipeline stats, IX channel counts)
+
+Usage:
+    python scripts/generate_dashboard.py
+    open dashboard/index.html
+"""
+
+import json
+import re
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+PROFILE_DIR = REPO_ROOT / "users" / "pilot-001"
+DASHBOARD_DIR = REPO_ROOT / "dashboard"
+
+
+@dataclass
+class DashboardData:
+    name: str
+    age: int
+    lexile_output: str
+    pending_count: int
+    pending_candidates: list[dict]
+    ix_a_count: int
+    ix_b_count: int
+    ix_c_count: int
+    write_count: int
+    read_count: int
+    create_count: int
+    skills_summary: dict
+    knowledge_samples: list[str]
+    curiosity_samples: list[str]
+    personality_samples: list[str]
+    library_entries: list[dict]
+    recent_exchanges: list[dict]
+    generated_at: str
+    last_pipeline_activity: str
+    total_tokens: int
+    tokens_today: int
+    tokens_per_ix: str  # "X" or "—" when no IX
+
+
+def parse_pending_review(content: str) -> tuple[int, list[dict]]:
+    """Extract pending candidates from PENDING-REVIEW.md."""
+    candidates = []
+    in_candidates = False
+    in_processed = False
+    current: dict | None = None
+
+    for line in content.splitlines():
+        if line.strip() == "## Candidates":
+            in_candidates = True
+            in_processed = False
+            continue
+        if line.strip() == "## Processed":
+            in_candidates = False
+            in_processed = True
+            continue
+
+        if in_candidates:
+            if m := re.match(r"^### (CANDIDATE-\d+)", line):
+                current = {"id": m.group(1), "summary": "", "mind_category": "", "priority_score": ""}
+                candidates.append(current)
+            elif current and line.strip().startswith("summary:"):
+                current["summary"] = line.split(":", 1)[1].strip().strip('"')
+            elif current and line.strip().startswith("mind_category:"):
+                current["mind_category"] = line.split(":", 1)[1].strip()
+            elif current and line.strip().startswith("priority_score:"):
+                current["priority_score"] = line.split(":", 1)[1].strip()
+
+    return len(candidates), candidates
+
+
+def parse_self(content: str) -> dict:
+    """Extract key fields from SELF.md."""
+    data = {"name": "?", "age": 0, "lexile_output": "?", "ix_a_count": 0, "ix_b_count": 0, "ix_c_count": 0}
+
+    if m := re.search(r"name:\s*(\S+)", content):
+        data["name"] = m.group(1)
+    if m := re.search(r"age:\s*(\d+)", content):
+        data["age"] = int(m.group(1))
+    if m := re.search(r'lexile_output:\s*["\']?([^"\'\n]+)', content):
+        data["lexile_output"] = m.group(1).strip()
+
+    data["ix_a_count"] = len(re.findall(r"id:\s+LEARN-\d+", content))
+    data["ix_b_count"] = len(re.findall(r"id:\s+CUR-\d+", content))
+    data["ix_c_count"] = len(re.findall(r"id:\s+PER-\d+", content))
+
+    return data
+
+
+def parse_evidence(content: str) -> dict:
+    """Count evidence entries from EVIDENCE.md."""
+    write = len(re.findall(r"id:\s+WRITE-\d+", content))
+    read = len(re.findall(r"id:\s+READ-\d+", content))
+    create = len(re.findall(r"id:\s+CREATE-\d+", content))
+    return {"write": write, "read": read, "create": create}
+
+
+def parse_skills(content: str) -> dict:
+    """Extract container status from SKILLS.md."""
+    summary = {}
+    for container in ["READ", "WRITE", "IMAGINE"]:
+        block = re.search(
+            rf"### {container} Container.*?```yaml(.*?)```",
+            content,
+            re.DOTALL,
+        )
+        if block:
+            yaml = block.group(1).strip()
+            status = "?"
+            if m := re.search(r"status:\s*(\S+)", yaml):
+                status = m.group(1)
+            edge = ""
+            if m := re.search(r"edge:\s*[\"']?(.+?)[\"']?\s*(?:\n|$)", yaml, re.DOTALL):
+                edge = m.group(1).strip().strip('"')[:80]
+            summary[container] = {"status": status, "edge": edge}
+    return summary
+
+
+def parse_archive(content: str, limit: int = 10) -> list[dict]:
+    """Extract recent USER/GRACE-MAR exchanges from archive (with timestamps)."""
+    exchanges = []
+    pattern = r"\*\*\[([^\]]+)\]\*\*\s+`(USER|GRACE-MAR[^`]*)`.*?\n> (.+?)(?=\n\n|\n\*\*\[|\Z)"
+    for m in re.finditer(pattern, content, re.DOTALL):
+        ts, role, text = m.group(1), m.group(2), m.group(3).strip().replace("\n> ", "\n")
+        if "GRACE-MAR" in role or role == "USER":
+            exchanges.append({"timestamp": ts, "role": role, "text": text})
+
+    # Pair USER + GRACE-MAR, take last N pairs (include timestamp from USER)
+    paired = []
+    i = 0
+    while i < len(exchanges) - 1:
+        if exchanges[i]["role"] == "USER" and "GRACE-MAR" in exchanges[i + 1]["role"]:
+            paired.append({
+                "timestamp": exchanges[i]["timestamp"],
+                "user": exchanges[i]["text"],
+                "grace_mar": exchanges[i + 1]["text"],
+            })
+            i += 2
+        else:
+            i += 1
+
+    return paired[-limit:]
+
+
+def parse_library(content: str) -> list[dict]:
+    """Extract active LIBRARY entries (id, title, scope) from LIBRARY.md."""
+    entries = []
+    blocks = re.split(r'-\s+id:\s+LIB-', content)
+    for block in blocks[1:]:  # skip first (header)
+        num = re.match(r'(\d+)', block)
+        lib_id = "LIB-" + num.group(1) if num else "?"
+        title_m = re.search(r'title:\s*["\']([^"\']+)["\']', block)
+        scope_m = re.search(r'scope:\s*\[([^\]]*)\]', block)
+        status_m = re.search(r'status:\s*(\w+)', block)
+        if status_m and status_m.group(1) != "active":
+            continue
+        title = title_m.group(1) if title_m else ""
+        scope_str = scope_m.group(1) if scope_m else ""
+        scope = [s.strip() for s in scope_str.split(",") if s.strip()]
+        entries.append({"id": lib_id, "title": title, "scope": scope})
+    return entries
+
+
+def parse_ix_samples(content: str) -> tuple[list[str], list[str], list[str]]:
+    """Extract topics from IX-A, IX-B, IX-C in SELF.md (all entries)."""
+    knowledge = re.findall(r'id: LEARN-\d+.*?topic:\s*["\']([^"\']+)["\']', content, re.DOTALL)
+    curiosity = re.findall(r'id: CUR-\d+.*?topic:\s*["\']([^"\']+)["\']', content, re.DOTALL)
+    personality = re.findall(r'id: PER-\d+.*?observation:\s*["\']([^"\']+)["\']', content, re.DOTALL)
+    if not personality:
+        personality = re.findall(r'id: PER-\d+.*?observation:\s*([^\n]+)', content, re.DOTALL)
+    personality = [p.strip() for p in personality]
+    return (knowledge, curiosity, personality)
+
+
+def collect_data() -> DashboardData:
+    """Collect all dashboard data from profile files."""
+    pending_path = PROFILE_DIR / "PENDING-REVIEW.md"
+    self_path = PROFILE_DIR / "SELF.md"
+    evidence_path = PROFILE_DIR / "EVIDENCE.md"
+    skills_path = PROFILE_DIR / "SKILLS.md"
+    archive_path = PROFILE_DIR / "GRACE-MAR-BOT-ARCHIVE.md"
+    library_path = PROFILE_DIR / "LIBRARY.md"
+
+    pending_content = pending_path.read_text() if pending_path.exists() else ""
+    self_content = self_path.read_text() if self_path.exists() else ""
+    evidence_content = evidence_path.read_text() if evidence_path.exists() else ""
+    skills_content = skills_path.read_text() if skills_path.exists() else ""
+    archive_content = archive_path.read_text() if archive_path.exists() else ""
+    library_content = library_path.read_text() if library_path.exists() else ""
+
+    pending_count, pending_candidates = parse_pending_review(pending_content)
+    self_data = parse_self(self_content)
+    evidence_data = parse_evidence(evidence_content)
+    skills_summary = parse_skills(skills_content)
+    knowledge_samples, curiosity_samples, personality_samples = parse_ix_samples(self_content)
+    library_entries = parse_library(library_content)
+    recent = parse_archive(archive_content, limit=15)
+
+    last_activity = "—"
+    if pending_path.exists():
+        mtime = pending_path.stat().st_mtime
+        last_activity = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d")
+
+    ledger_path = PROFILE_DIR / "COMPUTE-LEDGER.jsonl"
+    total_tokens = 0
+    tokens_today = 0
+    today = datetime.now().strftime("%Y-%m-%d")
+    if ledger_path.exists():
+        for line in ledger_path.read_text().strip().splitlines():
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+                t = row.get("total_tokens", row.get("prompt_tokens", 0) + row.get("completion_tokens", 0))
+                total_tokens += t
+                if row.get("ts", "").startswith(today):
+                    tokens_today += t
+            except (json.JSONDecodeError, KeyError):
+                pass
+    ix_total = self_data["ix_a_count"] + self_data["ix_b_count"] + self_data["ix_c_count"]
+    tokens_per_ix = str(total_tokens // ix_total) if ix_total and total_tokens else "—"
+
+    return DashboardData(
+        name=self_data["name"],
+        age=self_data["age"],
+        lexile_output=self_data["lexile_output"],
+        pending_count=pending_count,
+        pending_candidates=pending_candidates,
+        ix_a_count=self_data["ix_a_count"],
+        ix_b_count=self_data["ix_b_count"],
+        ix_c_count=self_data["ix_c_count"],
+        write_count=evidence_data["write"],
+        read_count=evidence_data["read"],
+        create_count=evidence_data["create"],
+        skills_summary=skills_summary,
+        knowledge_samples=knowledge_samples,
+        curiosity_samples=curiosity_samples,
+        personality_samples=personality_samples,
+        library_entries=library_entries,
+        recent_exchanges=recent,
+        generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        last_pipeline_activity=last_activity,
+        total_tokens=total_tokens,
+        tokens_today=tokens_today,
+        tokens_per_ix=tokens_per_ix,
+    )
+
+
+def render_html(data: DashboardData) -> str:
+    """Render dashboard as self-contained HTML (fits viewport, no scroll)."""
+    css = """
+    :root { --bg: #0f1419; --surface: #1a2332; --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff; --success: #3fb950; --warn: #d29922; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+    body { font-family: 'SF Mono', 'Consolas', monospace; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.4; padding: 0.5rem; }
+    .dash { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr auto; gap: 0.4rem; height: 100vh; max-height: 100vh; }
+    .header { grid-column: 1/-1; display: flex; align-items: center; gap: 1rem; }
+    h1 { font-size: 1.25rem; margin: 0; }
+    .meta { color: var(--muted); font-size: 0.9rem; }
+    h2 { font-size: 0.9rem; color: var(--accent); margin: 0 0 0.25rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    section { background: var(--surface); border-radius: 4px; padding: 0.5rem 0.6rem; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.3rem; }
+    .stat { background: var(--bg); padding: 0.3rem 0.4rem; border-radius: 2px; }
+    .stat .label { font-size: 0.8rem; color: var(--muted); }
+    .stat .value { font-size: 1.1rem; font-weight: 600; }
+    .badge { display: inline-block; padding: 0.1rem 0.35rem; border-radius: 2px; font-size: 0.8rem; }
+    .badge.pending { background: var(--warn); color: var(--bg); }
+    .badge.ok { background: var(--success); color: var(--bg); }
+    .candidate { padding: 0.25rem 0; font-size: 0.95rem; }
+    .exchange { padding: 0.3rem 0; font-size: 0.95rem; border-bottom: 1px solid var(--bg); }
+    .exchange:last-child { border-bottom: none; }
+    .exchange-ts { font-size: 0.8rem; color: var(--muted); }
+    .exchange .user { color: var(--muted); }
+    .exchange .gm { color: var(--accent); }
+    .skills-wrap { overflow-y: auto; max-height: 5rem; -webkit-overflow-scrolling: touch; }
+    .skills-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .skill { flex: 1 1 160px; min-width: 0; background: var(--bg); padding: 0.4rem; border-radius: 2px; font-size: 0.95rem; }
+    .skill .name { font-weight: 600; color: var(--accent); }
+    .skill .edge { color: var(--muted); font-size: 0.85rem; }
+    .tabs { display: flex; gap: 0.3rem; margin-bottom: 0.3rem; flex-shrink: 0; }
+    .tab { padding: 0.3rem 0.6rem; font-size: 0.9rem; background: var(--bg); border-radius: 2px; cursor: pointer; color: var(--muted); border: 1px solid transparent; }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); background: var(--surface); border-color: var(--accent); cursor: default; }
+    .tab-content { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+    .tab-panel { display: none; flex: 1; min-height: 0; flex-direction: column; overflow: hidden; }
+    .tab-panel.active { display: flex; }
+    .tab-panel ul { margin: 0; padding-left: 1.2rem; overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; font-size: 0.95rem; }
+    .tab-panel li { margin-bottom: 0.1rem; }
+    .tab-panel.skills-panel { display: none; flex-direction: column; overflow: hidden; }
+    .tab-panel.skills-panel.active { display: flex; }
+    .tab-panel .skills-row { flex-wrap: wrap; gap: 0.5rem; overflow-y: auto; }
+    .panel-scroll { overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+    .row-main { grid-column: 1/-1; display: grid; grid-template-columns: 2fr 1fr; gap: 0.4rem; min-height: 0; }
+    .col-left { display: grid; grid-template-rows: 1fr auto; gap: 0.4rem; min-height: 0; }
+    .col-right { display: flex; flex-direction: column; gap: 0.4rem; min-height: 0; }
+    """
+
+    pipeline_badge = f'<span class="badge pending">{data.pending_count} pending</span>' if data.pending_candidates else '<span class="badge ok">Queue empty</span>'
+
+    skills_html = "".join(
+        f'<div class="skill"><span class="name">{k}</span> {v["status"]}'
+        + (f'<div class="edge">{v["edge"]}</div>' if v.get("edge") else '')
+        + '</div>'
+        for k, v in data.skills_summary.items()
+    )
+
+    exchanges_html = "".join(
+        f'<div class="exchange">'
+        f'<div class="exchange-ts">{e["timestamp"]}</div>'
+        f'<div class="user">USER: {e["user"]}</div>'
+        f'<div class="gm">GRACE-MAR: {e["grace_mar"]}</div>'
+        f'</div>'
+        for e in reversed(data.recent_exchanges)
+    )
+
+    k_samples = "".join(f'<li>{s}</li>' for s in data.knowledge_samples) or '<li class="meta">—</li>'
+    c_samples = "".join(f'<li>{s}</li>' for s in data.curiosity_samples) or '<li class="meta">—</li>'
+    p_samples = "".join(f'<li>{s}</li>' for s in data.personality_samples) or '<li class="meta">—</li>'
+    lib_samples = "".join(f'<li>{e["title"]}</li>' for e in data.library_entries) or '<li class="meta">—</li>'
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Grace-Mar — {data.name}</title>
+    <style>{css}</style>
+</head>
+<body>
+    <div class="dash">
+        <div class="header">
+            <h1>{data.name}</h1>
+            <span class="meta">{data.generated_at} · pilot-001</span>
+            <div class="grid" style="flex:1; max-width:360px; margin-left:auto;">
+                <div class="stat"><div class="label">Age</div><div class="value">{data.age}</div></div>
+                <div class="stat"><div class="label">Lexile</div><div class="value">{data.lexile_output}</div></div>
+                <div class="stat"><div class="label">IX-A</div><div class="value">{data.ix_a_count}</div></div>
+                <div class="stat"><div class="label">IX-B</div><div class="value">{data.ix_b_count}</div></div>
+                <div class="stat"><div class="label">IX-C</div><div class="value">{data.ix_c_count}</div></div>
+                <div class="stat"><div class="label">Pipeline</div><div class="value">{pipeline_badge}</div></div>
+            </div>
+        </div>
+        <div class="row-main">
+            <div class="col-left">
+                <section style="flex:1; min-height:0;">
+                    <h2>Profile</h2>
+                    <div class="tabs">
+                        <button class="tab active" data-tab="knowledge">Knowledge {data.ix_a_count}</button>
+                        <button class="tab" data-tab="skills">Skills</button>
+                        <button class="tab" data-tab="curiosity">Curiosity {data.ix_b_count}</button>
+                        <button class="tab" data-tab="personality">Personality {data.ix_c_count}</button>
+                        <button class="tab" data-tab="library">Library {len(data.library_entries)}</button>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-panel active" id="panel-knowledge"><ul>{k_samples}</ul></div>
+                        <div class="tab-panel skills-panel" id="panel-skills"><div class="skills-row">{skills_html}</div></div>
+                        <div class="tab-panel" id="panel-curiosity"><ul>{c_samples}</ul></div>
+                        <div class="tab-panel" id="panel-personality"><ul>{p_samples}</ul></div>
+                        <div class="tab-panel" id="panel-library"><ul>{lib_samples}</ul></div>
+                    </div>
+                </section>
+            </div>
+            <div class="col-right">
+                <section style="flex:1; min-height:0; overflow:hidden; display:flex; flex-direction:column;">
+                    <h2>Recent exchanges</h2>
+                    <div class="panel-scroll" style="flex:1;">{exchanges_html or "<p class=\"meta\">—</p>"}</div>
+                </section>
+                <section>
+                    <h2>Benchmarks</h2>
+                    <div class="grid">
+                        <div class="stat"><div class="label">Lexile</div><div class="value">{data.lexile_output}</div></div>
+                        <div class="stat"><div class="label">Backlog</div><div class="value">{data.pending_count}</div></div>
+                        <div class="stat"><div class="label">IX total</div><div class="value">{data.ix_a_count + data.ix_b_count + data.ix_c_count}</div></div>
+                        <div class="stat"><div class="label">Last pipeline activity</div><div class="value">{data.last_pipeline_activity}</div></div>
+                        <div class="stat"><div class="label">Tokens today</div><div class="value">{data.tokens_today:,}</div></div>
+                        <div class="stat"><div class="label">Tokens total</div><div class="value">{data.total_tokens:,}</div></div>
+                        <div class="stat"><div class="label">Tokens/IX</div><div class="value">{data.tokens_per_ix}</div></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <script>
+    document.querySelectorAll('.tab').forEach(function(btn) {{
+        btn.addEventListener('click', function() {{
+            var tab = this.dataset.tab;
+            document.querySelectorAll('.tab').forEach(function(b) {{ b.classList.remove('active'); }});
+            document.querySelectorAll('.tab-panel').forEach(function(p) {{ p.classList.remove('active'); }});
+            this.classList.add('active');
+            var panel = document.getElementById('panel-' + tab);
+            if (panel) panel.classList.add('active');
+        }});
+    }});
+    </script>
+</body>
+</html>
+"""
+
+
+def main() -> None:
+    data = collect_data()
+    html = render_html(data)
+    DASHBOARD_DIR.mkdir(exist_ok=True)
+    out_path = DASHBOARD_DIR / "index.html"
+    out_path.write_text(html, encoding="utf-8")
+    print(f"Dashboard written to {out_path}")
+
+
+if __name__ == "__main__":
+    main()
