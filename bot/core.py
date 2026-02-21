@@ -20,13 +20,22 @@ from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from prompt import (
+try:
+    from .prompt import (
     SYSTEM_PROMPT,
     LOOKUP_PROMPT,
     LIBRARY_LOOKUP_PROMPT,
     REPHRASE_PROMPT,
     ANALYST_PROMPT,
 )
+except ImportError:
+    from prompt import (
+        SYSTEM_PROMPT,
+        LOOKUP_PROMPT,
+        LIBRARY_LOOKUP_PROMPT,
+        REPHRASE_PROMPT,
+        ANALYST_PROMPT,
+    )
 
 load_dotenv()
 
@@ -371,6 +380,11 @@ def get_response(channel_key: str, user_message: str) -> str:
     _run_analyst_background(user_message, assistant_message, channel_key)
 
     return assistant_message
+
+
+def run_lookup(question: str, channel_key: str = "miniapp") -> str:
+    """Public entry point for lookup. Used by Mini App."""
+    return _lookup_with_library_first(question, channel_key)
 
 
 def reset_conversation(channel_key: str) -> None:

@@ -1,4 +1,4 @@
-# Deploy dashboard to GitHub Pages (for Telegram Mini App)
+# Deploy dashboard to GitHub Pages (browser-only)
 name: Deploy dashboard to Pages
 
 on:

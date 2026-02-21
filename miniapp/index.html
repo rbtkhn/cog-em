@@ -43,7 +43,10 @@
       var q = document.getElementById('q');
       var send = document.getElementById('send');
       var apiBase = (document.documentElement.dataset.apiBase || '').replace(/\/$/, '') || '';
+      var messages = [];
       function addMsg(role, text) {
+        var apiRole = role === 'gm' ? 'assistant' : 'user';
+        messages.push({ role: apiRole, content: text });
         var d = document.createElement('div');
         d.className = 'msg ' + role;
         d.innerHTML = '<div class="label">' + (role === 'user' ? 'You' : 'Grace-Mar') + '</div>' + text.replace(/</g, '&lt;').replace(/\n/g, '<br>');
@@ -84,7 +87,7 @@
         fetch((apiBase || '') + '/api/ask', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: text })
+          body: JSON.stringify({ message: text, history: messages.slice(0, -1) })
         }).then(function(r) {
           return r.json().then(function(data) {
             if (!r.ok) throw new Error(data.error || data.detail || 'Something went wrong');

@@ -80,6 +80,11 @@ grace-mar/
 │   └── validate-integrity.py       # Integrity validator
 ├── dashboard/
 │   └── index.html                   # Fork dashboard (run generate_dashboard.py to refresh)
+├── miniapp/
+│   └── index.html                   # Q&A Mini App UI
+├── miniapp_server.py                # Q&A server (Flask: / + /api/ask) — deploy to Railway/Render
+├── Procfile                         # For miniapp_server deployment
+├── requirements.txt                 # miniapp_server deps
 ├── bot/
 │   ├── core.py                      # Shared emulation logic (Telegram + WeChat)
 │   ├── bot.py                       # Telegram bot
@@ -120,7 +125,7 @@ python3 scripts/generate_dashboard.py
 open dashboard/index.html
 ```
 
-The same dashboard can run as a **Telegram Mini App** — chat and inspect the fork in one place. Set `DASHBOARD_MINIAPP_URL` in `bot/.env`, host the dashboard over HTTPS, and use `/dashboard` or the menu button. See [docs/MINIAPP-SETUP.md](docs/MINIAPP-SETUP.md).
+The dashboard is **browser-only** (e.g. deployed to GitHub Pages). A separate **Q&A Mini App** lets users ask Grace-Mar questions and see her voice — deploy `miniapp_server.py` to Railway/Render and set `DASHBOARD_MINIAPP_URL` in `bot/.env` to that URL. See [docs/MINIAPP-SETUP.md](docs/MINIAPP-SETUP.md).
 
 ## Archive Rotation
 
@@ -149,6 +154,29 @@ python scripts/export_fork.py                      # Print JSON to stdout
 python scripts/export_fork.py -o fork-export.json  # Write to file
 python scripts/export_fork.py --no-raw -o summary.json  # Summary + manifest only
 ```
+
+## Uniqueness measurement
+
+Quantify how different Grace-Mar's responses are from a generic LLM:
+
+```bash
+pip install textstat  # optional, for readability gap
+python3 scripts/measure_uniqueness.py
+python3 scripts/measure_uniqueness.py --limit 5   # quick run
+python3 scripts/measure_uniqueness.py -v          # verbose
+```
+
+Outputs: **abstention score** (boundary enforcement), **divergence score** (answer uniqueness via embeddings), **readability gap** (simpler = Lexile-constrained), and a **composite uniqueness** value.
+
+## Growth rate and cognitive density
+
+Measure how fast the fork is growing and how dense its content is:
+
+```bash
+python3 scripts/measure_growth_and_density.py
+```
+
+Reports: **entries per day**, **pipeline throughput** (if PIPELINE-EVENTS exists), **words per IX entry**, **evidence backing %**, **topic diversity**, **channel balance** (IX-A:IX-B:IX-C), and **git history delta**.
 
 ## Validation
 

@@ -1,76 +1,87 @@
 # Telegram Mini App Setup
 
-The Grace-Mar dashboard can run as a **Telegram Mini App**, embedded inside Telegram so you can view the fork (profile, pipeline, benchmarks, disclosure) without leaving the chat.
+Grace-Mar has two web surfaces:
 
-## Prerequisites
+- **Dashboard** — Full profile view (Knowledge, Skills, Curiosity, Personality, Library, Disclosure). **Browser only.** Served on GitHub Pages.
+- **Q&A Mini App** — Interactive Q&A with Grace-Mar. Runs as a **Telegram Mini App** and can also be opened in a browser.
 
-- The dashboard must be served over **HTTPS**. Telegram only loads Mini Apps from secure origins.
-- You need a hosted URL (e.g. GitHub Pages, Netlify, Vercel) pointing to the `dashboard/` directory.
+## Architecture
 
-## 1. Generate the dashboard
+| Surface | Host | URL | Purpose |
+|---------|------|-----|---------|
+| Dashboard | GitHub Pages | `https://<org>.github.io/grace-mar/dashboard/` | Read-only fork view, browser-only |
+| Q&A Mini App | Railway / Render / etc. | `https://grace-mar-qa.railway.app` | Ask Grace-Mar questions, see her knowledge and voice |
+
+Set `DASHBOARD_MINIAPP_URL` in `bot/.env` to the **Q&A Mini App** URL (not the dashboard). The menu button and `/dashboard` open the Q&A app inside Telegram.
+
+## 1. Dashboard (browser-only)
+
+Generate and deploy the static dashboard:
 
 ```bash
 python3 scripts/generate_dashboard.py
 ```
 
-This writes `dashboard/index.html`. The same file works both as a standalone page and as a Mini App.
+Deploy `dashboard/` to GitHub Pages via `.github/workflows/pages.yml`. The dashboard lives at `https://<org>.github.io/grace-mar/dashboard/`. Users open it directly in a browser.
 
-## 2. Host the dashboard
+## 2. Q&A Mini App (Mini App + API)
 
-Deploy `dashboard/` to a static host. Examples:
+The Q&A app consists of:
 
-### GitHub Pages
+- Static UI: `miniapp/index.html`
+- API: `POST /api/ask` with `{ "message": "..." }` → `{ "response": "..." }`
+- Server: `miniapp_server.py` serves both
 
-A workflow (`.github/workflows/pages.yml`) builds and deploys the dashboard automatically:
+### Run locally
 
-1. Go to repo **Settings → Pages**.
-2. Under "Build and deployment", set **Source** to **GitHub Actions** (not "Deploy from a branch").
-3. Push to `main` or run the workflow manually (Actions → Deploy dashboard to Pages → Run workflow).
-4. When deployment finishes, the site URL is `https://<org-or-username>.github.io/grace-mar/` (the dashboard is served at the root).
-5. Set `DASHBOARD_MINIAPP_URL=https://<org-or-username>.github.io/grace-mar/` in `bot/.env`.
+```bash
+pip install -r requirements.txt
+OPENAI_API_KEY=sk-... python miniapp_server.py
+```
 
-### Netlify / Vercel
+Open http://localhost:5000. For Telegram testing, expose with ngrok:
+
+```bash
+ngrok http 5000
+```
+
+### Deploy (Railway / Render)
+
+**Railway**
 
 1. Connect the repo.
-2. Set the publish directory to `dashboard` (or the repo root and ensure `/dashboard/` is served).
-3. Use the deployed URL, e.g. `https://grace-mar-dashboard.netlify.app/`.
+2. Root directory = repo root. Railway uses `Procfile` and `requirements.txt`.
+3. Set env: `OPENAI_API_KEY`, `PORT` (optional, Railway sets it).
+4. Deploy. Use the generated URL (e.g. `https://grace-mar-qa.railway.app`).
 
-## 3. Configure @BotFather (optional)
+**Render**
 
-In @BotFather, you can set the Mini App URL as the **Menu Button**:
+1. New Web Service, connect repo.
+2. Build: `pip install -r requirements.txt`
+3. Start: `python miniapp_server.py`
+4. Set `OPENAI_API_KEY`. Use the service URL.
 
-1. Open @BotFather and select your bot.
-2. Bot Settings → Menu Button → Configure menu button.
-3. Set the URL to your hosted dashboard, e.g. `https://username.github.io/grace-mar/dashboard/`.
+## 3. Configure the bot (.env)
 
-This makes the menu button (next to the chat input) open the dashboard directly.
-
-## 4. Configure the bot (.env)
-
-Add the Mini App URL to `bot/.env`:
-
-```
-DASHBOARD_MINIAPP_URL=https://yourdomain.com/grace-mar/dashboard/
+```env
+DASHBOARD_MINIAPP_URL=https://grace-mar-qa.railway.app
 ```
 
-When set, the bot will:
+This URL must serve the Q&A Mini App (HTML at `/`, API at `/api/ask`). When set, the bot exposes `/dashboard` and the menu button, both opening this Q&A app.
 
-- Expose `/dashboard` — sends an "Open Dashboard" button that launches the Mini App.
-- Set the chat menu button to "Dashboard" so users can open it from the menu.
+## 4. @BotFather (optional)
 
-If `DASHBOARD_MINIAPP_URL` is not set, `/dashboard` will explain that setup is required.
+In @BotFather → Bot Settings → Menu Button:
+
+- Set URL to your Q&A Mini App URL (same as `DASHBOARD_MINIAPP_URL`).
 
 ## 5. Deep linking
 
-You can open specific tabs via the `startapp` parameter:
+Use `startapp` to open the Q&A app:
 
-- `t.me/your_bot?startapp=disclosure` — opens the Disclosure tab.
-- `t.me/your_bot?startapp=knowledge` — opens the Knowledge tab.
-- Valid tab IDs: `knowledge`, `skills`, `curiosity`, `personality`, `library`, `disclosure`.
-
-Configure these links in @BotFather (Menu Button → URL) or in buttons/messages.
+- `t.me/your_bot?startapp=` — opens the Q&A Mini App.
 
 ## Security
 
-- The dashboard is read-only. No sensitive data is submitted from the Mini App.
-- If you add forms or actions later, validate `initData` server-side with HMAC-SHA-256 using your bot token (see [Telegram Mini Apps docs](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app)).
+- The Q&A API is stateless and uses the same `SYSTEM_PROMPT` as the bot. No profile writes from the Mini App.
+- For production, consider rate limiting and `initData` validation (HMAC-SHA-256 with bot token) if you need user verification.
