@@ -192,6 +192,42 @@ def parse_ix_samples(content: str) -> tuple[list[str], list[str], list[str]]:
     return (knowledge, curiosity, personality)
 
 
+def parse_seed_interests(content: str) -> list[str]:
+    """Extract interest topics from Section V (current interests) in SELF.md."""
+    # Match "topic: X" under current: block (before ## VI or next ##)
+    section_v = re.search(r'## V\. INTERESTS.*?current:.*?(?=## |emerging:|$)', content, re.DOTALL)
+    if not section_v:
+        return []
+    topics = re.findall(r'^\s+-\s+topic:\s*(.+?)(?:\n|$)', section_v.group(0), re.MULTILINE)
+    return [t.strip() for t in topics if t.strip()]
+
+
+def parse_seed_personality(content: str) -> list[str]:
+    """Extract personality traits and patterns from Section IV in SELF.md."""
+    section_iv = re.search(r'## IV\. PERSONALITY.*?(?=## V\.|$)', content, re.DOTALL)
+    if not section_iv:
+        return []
+    out: list[str] = []
+    # traits: trait: X
+    for m in re.finditer(r'trait:\s*([^\n#]+)', section_iv.group(0)):
+        t = m.group(1).strip()
+        if t:
+            out.append(t)
+    # emotional_patterns: trigger → response
+    for m in re.finditer(r'trigger:\s*(.+?)\n\s+response:\s*([^\n]+)', section_iv.group(0), re.DOTALL):
+        trigger = m.group(1).strip()[:40]
+        response = m.group(2).strip()[:50]
+        out.append(f"{trigger} → {response}")
+    # humor, empathy, problem_solving one-liners
+    if m := re.search(r'humor:\s*\n\s+style:\s*([^\n]+)', section_iv.group(0)):
+        out.append(f"humor: {m.group(1).strip()}")
+    if m := re.search(r'empathy_mode:\s*(\w+[-]?\w*)', section_iv.group(0)):
+        out.append(f"empathy: {m.group(1)}")
+    if m := re.search(r'problem_solving:\s*\n\s+style:\s*([^\n]+)', section_iv.group(0)):
+        out.append(f"problem-solving: {m.group(1).strip()}")
+    return out[:15]  # cap to avoid overflow
+
+
 def collect_data() -> DashboardData:
     """Collect all dashboard data from profile files."""
     pending_path = PROFILE_DIR / "PENDING-REVIEW.md"
@@ -212,7 +248,12 @@ def collect_data() -> DashboardData:
     self_data = parse_self(self_content)
     evidence_data = parse_evidence(evidence_content)
     skills_summary = parse_skills(skills_content)
-    knowledge_samples, curiosity_samples, personality_samples = parse_ix_samples(self_content)
+    knowledge_samples, curiosity_ix, personality_ix = parse_ix_samples(self_content)
+    seed_interests = parse_seed_interests(self_content)
+    seed_personality = parse_seed_personality(self_content)
+    # Merge seed + post-seed: seed first (from detailed phases), then IX (pipeline growth)
+    curiosity_samples = seed_interests + curiosity_ix
+    personality_samples = seed_personality + personality_ix
     library_entries = parse_library(library_content)
     recent = parse_archive(archive_content, limit=15)
 
